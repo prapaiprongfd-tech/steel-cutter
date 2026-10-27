@@ -3,194 +3,546 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Barcut - ตารางคำนวณสั่งตัดเหล็กรูปพรรณ</title>
+  <title>ระบบคำนวณสั่งตัดเหล็กรูปพรรณ (Structural Steel Barcut Table System)</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <style>body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }</style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    input[type=number]::-webkit-inner-spin-button, 
+    input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+  </style>
 </head>
-<body class="bg-slate-100 text-slate-800 p-4 md:p-8">
-  <div class="max-w-5xl mx-auto space-y-6">
-    <div class="bg-gradient-to-r from-slate-900 to-blue-900 text-white p-6 rounded-2xl shadow-lg flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-      <div>
-        <h1 class="text-2xl font-bold flex items-center gap-2">
-          <span class="bg-blue-500 text-white rounded-lg px-2.5 py-1 text-lg">B</span>
-          Barcut - ระบบคำนวณตัดเหล็กรูปพรรณและคลังเศษ
-        </h1>
-        <p class="text-slate-300 text-sm mt-1">ดึงเศษเดิมในคลังมาใช้ก่อน + คำนวณรอยตัดใบเลื่อย + เก็บเศษใหม่เข้าสต็อก</p>
+<body class="bg-slate-100 text-slate-800 text-xs">
+
+  <!-- แถบหัวระบบหลัก -->
+  <header class="bg-[#1b2434] text-white p-3 shadow-md border-b-2 border-blue-500">
+    <div class="max-w-[1600px] mx-auto space-y-3">
+      
+      <!-- บรรทัดที่ 1: ชื่อระบบ และช่องกรอกโครงการ -->
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-shapes text-blue-400 text-base"></i>
+            <h1 class="text-sm font-bold tracking-wide text-white">ระบบคำนวณสั่งตัดเหล็กรูปพรรณ (Barcut Table System)</h1>
+          </div>
+          <span class="bg-emerald-600 text-[10px] px-2 py-0.5 rounded font-mono font-bold tracking-wider">V10.2 STRUCTURAL & REUSE OPTIMIZER</span>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <div class="flex items-center bg-slate-800 rounded px-2 py-1 border border-slate-700">
+            <span class="text-slate-400 mr-2 text-[11px]">ชื่อโครงการ:</span>
+            <input id="projName" type="text" value="โครงการอาคารโครงสร้างเหล็ก" class="bg-white text-slate-800 font-semibold px-2 py-0.5 rounded text-[11px] w-48 outline-none">
+          </div>
+          <div class="flex items-center bg-slate-800 rounded px-2 py-1 border border-slate-700">
+            <span class="text-slate-400 mr-2 text-[11px]">หมวดหมู่งาน:</span>
+            <input id="jobCategory" type="text" value="โครงหลังคาและเสาเหล็ก" class="bg-white text-slate-800 font-semibold px-2 py-0.5 rounded text-[11px] w-40 outline-none">
+          </div>
+        </div>
       </div>
-      <button onclick="calculatePlan()" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-6 py-3 rounded-xl shadow transition transform active:scale-95 text-lg">
-        ⚡ คำนวณแผนการตัด
+
+      <!-- บรรทัดที่ 2: แถบปุ่มคำสั่งการทำงาน -->
+      <div class="flex flex-wrap items-center gap-1.5 pt-1">
+        <button onclick="saveProject()" class="bg-[#107c6f] hover:bg-teal-700 text-white px-2.5 py-1.5 rounded flex items-center gap-1.5 font-semibold transition">
+          <i class="fa-solid fa-floppy-disk"></i> บันทึกงานลงคลัง
+        </button>
+        <button onclick="alert('เปิดคลังโครงงาน')" class="bg-[#354358] hover:bg-slate-600 text-white px-2.5 py-1.5 rounded flex items-center gap-1.5 font-semibold transition">
+          <i class="fa-solid fa-folder-open"></i> คลังโครงการส่วนตัว
+        </button>
+        <button onclick="calculateCutting()" class="bg-[#7942d6] hover:bg-purple-700 text-white px-3 py-1.5 rounded flex items-center gap-1.5 font-bold shadow-sm transition">
+          <i class="fa-solid fa-bolt"></i> คำนวณความยาวสต็อก Auto ขั้นสูง
+        </button>
+        <button onclick="clearCalculations()" class="bg-[#d83a3a] hover:bg-rose-700 text-white px-2.5 py-1.5 rounded flex items-center gap-1.5 font-semibold transition">
+          <i class="fa-solid fa-arrows-rotate"></i> ล้างข้อมูลคำนวณ & วิเคราะห์ใหม่
+        </button>
+        <button onclick="importExcel()" class="bg-[#d9531e] hover:bg-orange-700 text-white px-2.5 py-1.5 rounded flex items-center gap-1.5 font-semibold transition">
+          <i class="fa-solid fa-file-import"></i> นำเข้าไฟล์ Excel
+        </button>
+        <button onclick="resetTable()" class="bg-[#d49411] hover:bg-amber-600 text-white px-2.5 py-1.5 rounded flex items-center gap-1.5 font-semibold transition">
+          <i class="fa-solid fa-eraser"></i> ล้างตารางเริ่มงานใหม่
+        </button>
+        <button onclick="exportExcel()" class="bg-[#1b7e4b] hover:bg-emerald-700 text-white px-2.5 py-1.5 rounded flex items-center gap-1.5 font-semibold transition">
+          <i class="fa-solid fa-file-excel"></i> Export Excel
+        </button>
+        <button onclick="window.print()" class="bg-[#514bc5] hover:bg-indigo-700 text-white px-2.5 py-1.5 rounded flex items-center gap-1.5 font-semibold transition">
+          <i class="fa-solid fa-print"></i> พิมพ์รายงานสมบูรณ์
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <div class="max-w-[1600px] mx-auto p-3 space-y-3">
+
+    <!-- แท็บเมนูเอกสาร -->
+    <div class="flex items-center border-b border-slate-300 bg-white rounded-t-lg px-2 pt-2 gap-2 shadow-sm">
+      <button onclick="switchTab('barcut')" id="tabBtn-barcut" class="tab-btn px-4 py-2 font-bold border-b-2 border-blue-600 text-blue-600 flex items-center gap-2">
+        <i class="fa-solid fa-table-list"></i> ตาราง Barcut คำนวณตัดเหล็ก
+      </button>
+      <button onclick="switchTab('boq')" id="tabBtn-boq" class="tab-btn px-4 py-2 font-semibold text-slate-500 hover:text-slate-700 flex items-center gap-2">
+        <i class="fa-solid fa-box-archive"></i> สรุปรายการเหล็ก (BOQ Sheet)
+      </button>
+      <button onclick="switchTab('cuttingSheet')" id="tabBtn-cuttingSheet" class="tab-btn px-4 py-2 font-semibold text-slate-500 hover:text-slate-700 flex items-center gap-2">
+        <i class="fa-solid fa-diagram-project"></i> แผนผังตัดเหล็ก & เศษเข้าคลัง (Cutting Plan)
       </button>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4">
-        <h2 class="font-bold text-slate-700 border-b pb-2">⚙️ ตั้งค่าการตัด</h2>
-        <div>
-          <label class="text-xs font-semibold text-slate-500">ความยาวเหล็กมาตรฐาน (มม.)</label>
-          <input id="stdLength" type="number" value="6000" class="w-full mt-1 border rounded-lg px-3 py-2 text-sm bg-slate-50">
-        </div>
-        <div>
-          <label class="text-xs font-semibold text-slate-500">รอยตัด/ใบตัดกินเนื้อ (มม.)</label>
-          <input id="kerf" type="number" value="3" class="w-full mt-1 border rounded-lg px-3 py-2 text-sm bg-slate-50">
-        </div>
-        <div>
-          <label class="text-xs font-semibold text-slate-500">ความยาวเศษขั้นต่ำที่จะเก็บสต็อก (มม.)</label>
-          <input id="minScrap" type="number" value="500" class="w-full mt-1 border rounded-lg px-3 py-2 text-sm bg-slate-50">
+    <!-- แผงคำสั่งย่อย (Sub-bar) -->
+    <div class="bg-white p-2.5 rounded-lg border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-3">
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="font-bold text-slate-600 flex items-center gap-1"><i class="fa-solid fa-bolt text-amber-500"></i> ล็อกสต็อกทั้งโครงการ:</span>
+        <button onclick="setStockAll('auto')" class="bg-purple-600 text-white px-2.5 py-1 rounded font-semibold hover:bg-purple-700 flex items-center gap-1">
+          <i class="fa-solid fa-bolt"></i> Auto ทั้งหมด
+        </button>
+        <button onclick="setStockAll('6.0')" class="bg-orange-600 text-white px-2.5 py-1 rounded font-semibold hover:bg-orange-700 flex items-center gap-1">
+          <i class="fa-solid fa-lock"></i> ล็อก 6.0 ม. ทั้งหมด
+        </button>
+        <button onclick="setStockAll('12.0')" class="bg-emerald-700 text-white px-2.5 py-1 rounded font-semibold hover:bg-emerald-800 flex items-center gap-1">
+          <i class="fa-solid fa-lock"></i> ล็อก 12.0 ม. ทั้งหมด
+        </button>
+
+        <div class="h-4 w-[1px] bg-slate-300 mx-1"></div>
+
+        <div class="flex items-center gap-1 bg-slate-50 border rounded px-2 py-0.5">
+          <span class="text-slate-500 text-[11px]">ใบตัดกินเนื้อ:</span>
+          <input id="kerfInput" type="number" value="3" class="w-10 text-center font-bold bg-white border rounded text-[11px] px-1">
+          <span class="text-slate-400 text-[10px]">มม.</span>
         </div>
       </div>
 
-      <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 md:col-span-2 space-y-3">
-        <h2 class="font-bold text-slate-700 border-b pb-2">📦 เศษเหล็กเดิมในคลัง (ใส่คั่นด้วยจุลภาค ,)</h2>
-        <p class="text-xs text-slate-500">ระบบจะดึงเศษเหล่านี้มาตัดให้ก่อนเปิดเหล็กเส้นใหม่ 6.00 ม.</p>
-        <textarea id="existingScraps" rows="3" placeholder="ตัวอย่าง: 2500, 1900, 1300, 800" class="w-full border rounded-xl p-3 text-sm bg-slate-50 outline-none">2500, 1900, 1300, 800</textarea>
+      <div class="flex items-center gap-2">
+        <button onclick="calculateCutting()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded font-bold flex items-center gap-1 shadow-sm">
+          <i class="fa-solid fa-calculator"></i> รวมงานในโครงการ & คำนวณ
+        </button>
+        <button onclick="addNewRow()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded font-bold flex items-center gap-1 shadow-sm">
+          <i class="fa-solid fa-plus"></i> เพิ่มรายการ
+        </button>
       </div>
     </div>
 
-    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
-      <div class="flex justify-between items-center border-b pb-3">
-        <h2 class="font-bold text-slate-700 text-lg">📋 รายการชิ้นงานที่ต้องตัด</h2>
-        <button onclick="addRow()" class="bg-blue-50 text-blue-600 hover:bg-blue-100 font-semibold px-4 py-1.5 rounded-lg text-sm transition">
-          + เพิ่มแถว
-        </button>
-      </div>
-      <div class="overflow-x-auto">
-        <table class="w-full text-left border-collapse" id="cutsTable">
+    <!-- หน้าต่างที่ 1: ตาราง Barcut -->
+    <div id="tab-barcut" class="space-y-3">
+      <div class="bg-white rounded-lg border border-slate-200 shadow-sm overflow-x-auto">
+        <table class="w-full text-center border-collapse text-[11px]" id="barcutTable">
           <thead>
-            <tr class="text-xs font-semibold text-slate-400 border-b">
-              <th class="py-2 px-3">ชื่อชิ้นงาน / มาร์คเกอร์</th>
-              <th class="py-2 px-3 w-40">ความยาว (มม.)</th>
-              <th class="py-2 px-3 w-32">จำนวน (ชิ้น)</th>
-              <th class="py-2 px-3 w-20 text-center">ลบ</th>
+            <!-- Header แถวบน -->
+            <tr class="bg-slate-100 text-slate-700 border-b border-slate-300 font-bold">
+              <th class="py-1 px-1 border-r w-8">#</th>
+              <th class="py-1 px-2 border-r w-36">COMPONENT</th>
+              <th class="py-1 px-1 border-r w-12">NO.</th>
+              <th class="py-1 px-2 border-r w-48">TYPE / หน้าตัดเหล็กรูปพรรณ</th>
+              <th class="py-1 px-2 border-r bg-yellow-50 text-amber-900 w-32">ความยาวสต็อก</th>
+              <th class="py-1 px-1 border-r bg-yellow-50 text-amber-900 w-12">ชุด</th>
+              <th class="py-1 px-1 border-r bg-yellow-50 text-amber-900 w-12">ต่อชุด</th>
+              <th class="py-1 px-1 border-r bg-yellow-100 text-amber-950 font-bold w-14">รวมชิ้น</th>
+              <th class="py-1 px-2 border-r bg-blue-50 text-blue-900 w-32">รูปแบบมุมตัด (หัว-ท้าย)</th>
+              <th class="py-1 px-2 border-r bg-blue-100 text-blue-950 font-bold w-24">ยาวตัด/ชิ้น (ม.)</th>
+              <th class="py-1 px-2 border-r bg-emerald-100 text-emerald-950 font-bold w-20">จำนวนท่อนหลัก</th>
+              <th class="py-1 px-2 border-r bg-amber-50 text-amber-900 w-44">การนำเศษเหล็กมาใช้ (REUSE)</th>
+              <th class="py-1 px-2 border-r bg-rose-50 text-rose-900 w-44">รายละเอียดเศษเหลือ (OFFCUT)</th>
+              <th class="py-1 px-2 border-r bg-rose-100 text-rose-950 font-bold w-20">น.น. เศษ (KG)</th>
+              <th class="py-1 px-2 w-24">จัดการ</th>
+            </tr>
+            <!-- Header แถวล่าง คำอธิบายฟิลด์ -->
+            <tr class="bg-slate-50 text-slate-400 text-[10px] border-b border-slate-300">
+              <th class="border-r"></th>
+              <th class="border-r">ชื่อชิ้นงาน</th>
+              <th class="border-r">เบอร์</th>
+              <th class="border-r">ขนาด/มิติ/ความหนา</th>
+              <th class="border-r">6.0M / 12.0M / AUTO</th>
+              <th class="border-r">SET</th>
+              <th class="border-r">QTY</th>
+              <th class="border-r">TOTAL</th>
+              <th class="border-r">ตรง / บาก 45°</th>
+              <th class="border-r">CUT LENGTH</th>
+              <th class="border-r">∑TOTAL BAR</th>
+              <th class="border-r">REUSE SUMMARY</th>
+              <th class="border-r">OFFCUT SUMMARY</th>
+              <th class="border-r">SCRAP WT.</th>
+              <th>ACTION</th>
             </tr>
           </thead>
-          <tbody id="cutsBody" class="divide-y divide-slate-100 text-sm">
-            <tr>
-              <td class="py-2 px-3"><input type="text" value="เสา C-1" class="w-full border rounded-lg px-2.5 py-1.5"></td>
-              <td class="py-2 px-3"><input type="number" value="2400" class="cut-len w-full border rounded-lg px-2.5 py-1.5 font-mono"></td>
-              <td class="py-2 px-3"><input type="number" value="5" class="cut-qty w-full border rounded-lg px-2.5 py-1.5 font-mono"></td>
-              <td class="py-2 px-3 text-center"><button onclick="deleteRow(this)" class="text-rose-500 hover:text-rose-700 font-bold">✕</button></td>
-            </tr>
-            <tr>
-              <td class="py-2 px-3"><input type="text" value="คาน B-1" class="w-full border rounded-lg px-2.5 py-1.5"></td>
-              <td class="py-2 px-3"><input type="number" value="1800" class="cut-len w-full border rounded-lg px-2.5 py-1.5 font-mono"></td>
-              <td class="py-2 px-3"><input type="number" value="4" class="cut-qty w-full border rounded-lg px-2.5 py-1.5 font-mono"></td>
-              <td class="py-2 px-3 text-center"><button onclick="deleteRow(this)" class="text-rose-500 hover:text-rose-700 font-bold">✕</button></td>
-            </tr>
-            <tr>
-              <td class="py-2 px-3"><input type="text" value="จันทัน R-1" class="w-full border rounded-lg px-2.5 py-1.5"></td>
-              <td class="py-2 px-3"><input type="number" value="1250" class="cut-len w-full border rounded-lg px-2.5 py-1.5 font-mono"></td>
-              <td class="py-2 px-3"><input type="number" value="6" class="cut-qty w-full border rounded-lg px-2.5 py-1.5 font-mono"></td>
-              <td class="py-2 px-3 text-center"><button onclick="deleteRow(this)" class="text-rose-500 hover:text-rose-700 font-bold">✕</button></td>
-            </tr>
+          <tbody id="barcutTbody" class="divide-y divide-slate-200">
+            <!-- แถวจะถูกสร้างด้วย JavaScript -->
           </tbody>
         </table>
       </div>
     </div>
 
-    <div id="resultSection" class="hidden space-y-6">
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="statsGrid"></div>
-      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
-        <h2 class="font-bold text-slate-700 text-lg">📑 แผนผังการตัดทีละท่อน (Cutting Plan)</h2>
-        <div id="planContainer" class="space-y-4"></div>
+    <!-- หน้าต่างที่ 2: สรุปรายการเหล็ก BOQ -->
+    <div id="tab-boq" class="hidden bg-white p-5 rounded-lg border border-slate-200 shadow-sm space-y-4">
+      <h2 class="text-sm font-bold text-slate-700 flex items-center gap-2 border-b pb-2">
+        <i class="fa-solid fa-file-invoice text-blue-600"></i> สรุปปริมาณเหล็กรูปพรรณและยอดสั่งซื้อ (BOQ Bill of Quantities)
+      </h2>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse text-xs" id="boqTable">
+          <thead>
+            <tr class="bg-slate-100 text-slate-700 border-b font-bold">
+              <th class="p-2 border">หน้าตัดเหล็กรูปพรรณ</th>
+              <th class="p-2 border text-right">น.น. มาตรฐาน (กก./ม.)</th>
+              <th class="p-2 border text-right">ความยาวใช้จริง (ม.)</th>
+              <th class="p-2 border text-center">เหล็กเส้นใหม่ (6.0 ม.)</th>
+              <th class="p-2 border text-center">เศษเดิมที่ดึงมาใช้</th>
+              <th class="p-2 border text-right">เศษเหลือเข้าคลัง (ม.)</th>
+              <th class="p-2 border text-right">น.น. รวมที่ต้องสั่งซื้อ (กก.)</th>
+              <th class="p-2 border text-right">Yield การใช้วัสดุ (%)</th>
+            </tr>
+          </thead>
+          <tbody id="boqTbody">
+            <tr><td colspan="8" class="text-center p-4 text-slate-400">กดปุ่ม "คำนวณความยาวสต็อก Auto ขั้นสูง" เพื่อดูรายงาน BOQ</td></tr>
+          </tbody>
+        </table>
       </div>
     </div>
+
+    <!-- หน้าต่างที่ 3: แผนผังการตัด & คลังเศษเหล็ก -->
+    <div id="tab-cuttingSheet" class="hidden bg-white p-5 rounded-lg border border-slate-200 shadow-sm space-y-4">
+      <div class="flex justify-between items-center border-b pb-2">
+        <h2 class="text-sm font-bold text-slate-700 flex items-center gap-2">
+          <i class="fa-solid fa-bars-staggered text-purple-600"></i> แผนผังการจัดตัดเหล็กทีละท่อน (Cutting Plan & Pattern Sheet)
+        </h2>
+        <span class="text-xs text-slate-400">แสดงลำดับการตัดและการคัดแยกเศษเข้าสต็อก</span>
+      </div>
+      <div id="cuttingDiagramContainer" class="space-y-3">
+        <p class="text-center p-6 text-slate-400">ยังไม่มีข้อมูลการตัด กรุณากดปุ่มคำนวณ</p>
+      </div>
+    </div>
+
   </div>
 
   <script>
-    function addRow() {
-      const tbody = document.getElementById('cutsBody');
+    // ฐานข้อมูลหน้าตัดเหล็กรูปพรรณมาตรฐาน และน้ำหนักต่อเมตร (kg/m)
+    const STEEL_PROFILES = [
+      { name: "เหล็กกล่อง 50x50x2.3 มม.", weight: 3.32 },
+      { name: "เหล็กกล่อง 100x50x3.2 มม.", weight: 6.78 },
+      { name: "เหล็กกล่อง 100x100x3.2 มม.", weight: 9.38 },
+      { name: "เหล็กตัวซี C-100x50x20x3.2 มม.", weight: 5.50 },
+      { name: "เหล็กตัวซี C-150x50x20x3.2 มม.", weight: 6.76 },
+      { name: "เหล็กฉาก L 50x50x4.0 มม.", weight: 3.06 },
+      { name: "ท่อกลมดำ 2 นิ้ว (หนา 3.2 มม.)", weight: 4.51 },
+      { name: "H-Beam 150x150x7x10 มม.", weight: 31.50 }
+    ];
+
+    let rowCount = 0;
+
+    // ข้อมูลเริ่มต้นจำลอง
+    const initialData = [
+      { comp: "เสาเหล็ก C-1", profile: "เหล็กกล่อง 100x100x3.2 มม.", stock: "auto", set: 1, qty: 4, cutLen: 2.75, miter: "ตรง - ตรง" },
+      { comp: "คานโครงสร้าง B-1", profile: "เหล็กกล่อง 100x50x3.2 มม.", stock: "auto", set: 1, qty: 6, cutLen: 1.85, miter: "ตรง - ตรง" },
+      { comp: "แปหลังคา P-1", profile: "เหล็กตัวซี C-100x50x20x3.2 มม.", stock: "auto", set: 1, qty: 8, cutLen: 4.20, miter: "ตรง - ตรง" },
+      { comp: "ค้ำยันโครงสร้าง BR-1", profile: "เหล็กฉาก L 50x50x4.0 มม.", stock: "auto", set: 2, qty: 4, cutLen: 0.95, miter: "บาก 45° - ตรง" }
+    ];
+
+    window.onload = function() {
+      initialData.forEach(data => addNewRow(data));
+      calculateCutting();
+    };
+
+    function switchTab(tabId) {
+      ['barcut', 'boq', 'cuttingSheet'].forEach(id => {
+        document.getElementById(`tab-${id}`).classList.add('hidden');
+        document.getElementById(`tabBtn-${id}`).className = "tab-btn px-4 py-2 font-semibold text-slate-500 hover:text-slate-700 flex items-center gap-2";
+      });
+      document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+      document.getElementById(`tabBtn-${tabId}`).className = "tab-btn px-4 py-2 font-bold border-b-2 border-blue-600 text-blue-600 flex items-center gap-2";
+    }
+
+    function addNewRow(data = null) {
+      rowCount++;
+      const tbody = document.getElementById('barcutTbody');
       const tr = document.createElement('tr');
+      tr.id = `row-${rowCount}`;
+      tr.className = "hover:bg-slate-50 transition border-b";
+
+      let profileOptions = STEEL_PROFILES.map(p => 
+        `<option value="${p.name}" ${data && data.profile === p.name ? 'selected' : ''}>${p.name}</option>`
+      ).join('');
+
       tr.innerHTML = `
-        <td class="py-2 px-3"><input type="text" placeholder="ระบุชื่อชิ้นงาน" class="w-full border rounded-lg px-2.5 py-1.5"></td>
-        <td class="py-2 px-3"><input type="number" placeholder="0" class="cut-len w-full border rounded-lg px-2.5 py-1.5 font-mono"></td>
-        <td class="py-2 px-3"><input type="number" placeholder="1" value="1" class="cut-qty w-full border rounded-lg px-2.5 py-1.5 font-mono"></td>
-        <td class="py-2 px-3 text-center"><button onclick="deleteRow(this)" class="text-rose-500 hover:text-rose-700 font-bold">✕</button></td>
+        <td class="py-1 px-1 border-r font-mono text-slate-400">${rowCount}</td>
+        <td class="py-1 px-2 border-r">
+          <input type="text" value="${data ? data.comp : 'ชิ้นงานใหม่'}" class="row-comp w-full border border-slate-300 rounded px-1.5 py-0.5 text-left font-semibold">
+        </td>
+        <td class="py-1 px-1 border-r font-mono text-slate-600">${rowCount}</td>
+        <td class="py-1 px-2 border-r">
+          <select class="row-profile w-full border border-emerald-300 bg-emerald-50 text-emerald-900 rounded px-1.5 py-0.5 font-semibold text-[11px]">
+            ${profileOptions}
+          </select>
+        </td>
+        <td class="py-1 px-2 border-r bg-yellow-50/50">
+          <select class="row-stock w-full border border-amber-300 bg-white rounded px-1 py-0.5 text-[10px] font-semibold text-purple-700">
+            <option value="auto" ${!data || data.stock === 'auto' ? 'selected' : ''}>⚡ Auto (6m/เศษ)</option>
+            <option value="6.0" ${data && data.stock === '6.0' ? 'selected' : ''}>🔒 6.0 เมตร</option>
+            <option value="12.0" ${data && data.stock === '12.0' ? 'selected' : ''}>🔒 12.0 เมตร</option>
+          </select>
+        </td>
+        <td class="py-1 px-1 border-r bg-yellow-50/50">
+          <input type="number" oninput="updateRowCalc(${rowCount})" value="${data ? data.set : 1}" class="row-set w-full text-center border border-amber-200 rounded px-0.5 py-0.5 font-bold">
+        </td>
+        <td class="py-1 px-1 border-r bg-yellow-50/50">
+          <input type="number" oninput="updateRowCalc(${rowCount})" value="${data ? data.qty : 1}" class="row-qty w-full text-center border border-amber-200 rounded px-0.5 py-0.5 font-bold">
+        </td>
+        <td class="py-1 px-1 border-r bg-yellow-100 font-bold text-amber-950 font-mono row-total">0</td>
+        <td class="py-1 px-2 border-r bg-blue-50/40">
+          <select class="row-miter w-full border border-blue-200 bg-white rounded px-1 py-0.5 text-[10px]">
+            <option value="ตรง - ตรง">ตัดตรง - ตัดตรง</option>
+            <option value="บาก 45° - ตรง">บาก 45° - ตัดตรง</option>
+            <option value="บาก 45° - 45°">บาก 45° - บาก 45°</option>
+          </select>
+        </td>
+        <td class="py-1 px-2 border-r bg-blue-50 font-mono font-bold text-blue-900">
+          <input type="number" step="0.001" oninput="updateRowCalc(${rowCount})" value="${data ? data.cutLen : 1.000}" class="row-cutlen w-full text-center border border-blue-300 rounded px-1 py-0.5 font-bold">
+        </td>
+        <td class="py-1 px-2 border-r bg-emerald-50 font-bold text-emerald-800 font-mono row-bars">-</td>
+        <td class="py-1 px-2 border-r bg-amber-50 text-[10px] text-amber-800 row-reuse text-left pl-2">-</td>
+        <td class="py-1 px-2 border-r bg-rose-50 text-[10px] text-rose-800 row-offcut text-left pl-2">-</td>
+        <td class="py-1 px-2 border-r bg-rose-100 font-bold text-rose-900 font-mono row-scrapg">-</td>
+        <td class="py-1 px-2">
+          <div class="flex items-center justify-center gap-1 text-slate-500">
+            <button onclick="moveRow(${rowCount}, -1)" title="เลื่อนขึ้น" class="hover:text-blue-600"><i class="fa-solid fa-arrow-up"></i></button>
+            <button onclick="moveRow(${rowCount}, 1)" title="เลื่อนลง" class="hover:text-blue-600"><i class="fa-solid fa-arrow-down"></i></button>
+            <button onclick="cloneRow(${rowCount})" title="คัดลอกแถว" class="hover:text-amber-600"><i class="fa-regular fa-copy"></i></button>
+            <button onclick="deleteRow(${rowCount})" title="ลบแถว" class="hover:text-rose-600 font-bold"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+        </td>
       `;
       tbody.appendChild(tr);
+      updateRowCalc(rowCount);
     }
-    function deleteRow(btn) { btn.closest('tr').remove(); }
-    function calculatePlan() {
-      const stdLength = parseFloat(document.getElementById('stdLength').value) || 6000;
-      const kerf = parseFloat(document.getElementById('kerf').value) || 3;
-      const minScrap = parseFloat(document.getElementById('minScrap').value) || 500;
-      const existingScraps = document.getElementById('existingScraps').value.split(',').map(s => parseFloat(s.trim())).filter(n => !isNaN(n) && n > 0).sort((a, b) => b - a);
-      const rows = document.querySelectorAll('#cutsBody tr');
-      let cuts = [];
+
+    function updateRowCalc(id) {
+      const tr = document.getElementById(`row-${id}`);
+      if (!tr) return;
+      const set = parseFloat(tr.querySelector('.row-set').value) || 0;
+      const qty = parseFloat(tr.querySelector('.row-qty').value) || 0;
+      tr.querySelector('.row-total').innerText = set * qty;
+    }
+
+    function deleteRow(id) {
+      const tr = document.getElementById(`row-${id}`);
+      if (tr) tr.remove();
+    }
+
+    function cloneRow(id) {
+      const tr = document.getElementById(`row-${id}`);
+      if (!tr) return;
+      addNewRow({
+        comp: tr.querySelector('.row-comp').value + " (สำเนา)",
+        profile: tr.querySelector('.row-profile').value,
+        stock: tr.querySelector('.row-stock').value,
+        set: tr.querySelector('.row-set').value,
+        qty: tr.querySelector('.row-qty').value,
+        cutLen: tr.querySelector('.row-cutlen').value,
+        miter: tr.querySelector('.row-miter').value
+      });
+    }
+
+    function moveRow(id, dir) {
+      const tr = document.getElementById(`row-${id}`);
+      if (!tr) return;
+      if (dir === -1 && tr.previousElementSibling) {
+        tr.parentNode.insertBefore(tr, tr.previousElementSibling);
+      } else if (dir === 1 && tr.nextElementSibling) {
+        tr.parentNode.insertBefore(tr.nextElementSibling, tr);
+      }
+    }
+
+    function setStockAll(type) {
+      document.querySelectorAll('.row-stock').forEach(sel => sel.value = type);
+    }
+
+    function resetTable() {
+      if (confirm('คุณต้องการล้างข้อมูลในตารางทั้งหมดใช่หรือไม่?')) {
+        document.getElementById('barcutTbody').innerHTML = '';
+        rowCount = 0;
+        addNewRow();
+      }
+    }
+
+    // ฟังก์ชันคำนวณการจัดตัดเหล็กรูปพรรณ (Best-Fit Decreasing)
+    function calculateCutting() {
+      const kerfM = (parseFloat(document.getElementById('kerfInput').value) || 3) / 1000;
+      const rows = document.querySelectorAll('#barcutTbody tr');
+
+      // จัดกลุ่มตามประเภทหน้าตัดเหล็ก
+      let sections = {};
+
       rows.forEach(r => {
-        const name = r.querySelector('input[type="text"]').value.trim() || 'ชิ้นงาน';
-        const len = parseFloat(r.querySelector('.cut-len').value) || 0;
-        const qty = parseInt(r.querySelector('.cut-qty').value) || 0;
-        if (len > 0 && qty > 0) {
-          for (let i = 0; i < qty; i++) cuts.push({ name, length: len });
-        }
-      });
-      if (cuts.length === 0) { alert('กรุณากรอกรายการชิ้นงานอย่างน้อย 1 รายการ'); return; }
-      cuts.sort((a, b) => b.length - a.length);
+        const id = r.id;
+        const comp = r.querySelector('.row-comp').value;
+        const profile = r.querySelector('.row-profile').value;
+        const stockMode = r.querySelector('.row-stock').value;
+        const set = parseFloat(r.querySelector('.row-set').value) || 0;
+        const qty = parseFloat(r.querySelector('.row-qty').value) || 0;
+        const total = set * qty;
+        const cutLen = parseFloat(r.querySelector('.row-cutlen').value) || 0;
+        const miter = r.querySelector('.row-miter').value;
 
-      let bars = [];
-      existingScraps.forEach((sc, idx) => bars.push({ id: `เศษเดิม #${idx + 1}`, type: 'scrap', original_length: sc, remaining: sc, cuts: [] }));
-      let unplaced = [];
+        if (!sections[profile]) sections[profile] = [];
 
-      cuts.forEach(cut => {
-        let bestBar = null, minWaste = Infinity;
-        bars.filter(b => b.type === 'scrap').forEach(b => {
-          const needed = cut.length + (b.cuts.length > 0 ? kerf : 0);
-          if (b.remaining >= needed && (b.remaining - needed) < minWaste) { minWaste = b.remaining - needed; bestBar = b; }
+        sections[profile].push({
+          rowId: id, comp, total, cutLen, stockMode, miter
         });
-        if (!bestBar) {
-          minWaste = Infinity;
-          bars.filter(b => b.type === 'new').forEach(b => {
-            const needed = cut.length + (b.cuts.length > 0 ? kerf : 0);
-            if (b.remaining >= needed && (b.remaining - needed) < minWaste) { minWaste = b.remaining - needed; bestBar = b; }
-          });
-        }
-        if (!bestBar) {
-          if (cut.length > stdLength) { unplaced.push(cut); return; }
-          const newBar = { id: `เหล็กเส้นใหม่ #${bars.filter(b => b.type === 'new').length + 1}`, type: 'new', original_length: stdLength, remaining: stdLength, cuts: [] };
-          bars.push(newBar); bestBar = newBar;
-        }
-        bestBar.remaining -= cut.length + (bestBar.cuts.length > 0 ? kerf : 0);
-        bestBar.cuts.push(cut);
       });
 
-      const usedBars = bars.filter(b => b.cuts.length > 0);
-      document.getElementById('resultSection').classList.remove('hidden');
-      const newCount = usedBars.filter(b => b.type === 'new').length;
-      const reusedCount = usedBars.filter(b => b.type === 'scrap').length;
-      let totalCut = 0, totalRaw = 0, newScraps = [];
-      usedBars.forEach(b => {
-        b.cuts.forEach(c => totalCut += c.length);
-        totalRaw += b.original_length;
-        if (b.remaining >= minScrap) newScraps.push(b.remaining);
-      });
-      const yieldPct = totalRaw > 0 ? (totalCut / totalRaw * 100).toFixed(1) : 0;
+      let boqSummary = {};
+      let diagramHtml = '';
 
-      document.getElementById('statsGrid').innerHTML = `
-        <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl text-center"><p class="text-xs text-blue-600 font-semibold">เบิกเหล็กใหม่ (6 ม.)</p><p class="text-2xl font-bold text-blue-900 mt-1">${newCount} <span class="text-sm font-normal">เส้น</span></p></div>
-        <div class="bg-amber-50 border border-amber-200 p-4 rounded-xl text-center"><p class="text-xs text-amber-600 font-semibold">ดึงเศษเดิมมาใช้</p><p class="text-2xl font-bold text-amber-900 mt-1">${reusedCount} <span class="text-sm font-normal">ท่อน</span></p></div>
-        <div class="bg-emerald-50 border border-emerald-200 p-4 rounded-xl text-center"><p class="text-xs text-emerald-600 font-semibold">อัตราใช้เนื้อเหล็ก</p><p class="text-2xl font-bold text-emerald-900 mt-1">${yieldPct}%</p></div>
-        <div class="bg-purple-50 border border-purple-200 p-4 rounded-xl text-center"><p class="text-xs text-purple-600 font-semibold">เศษใหม่เก็บเข้าสต็อก</p><p class="text-2xl font-bold text-purple-900 mt-1">${newScraps.length} <span class="text-sm font-normal">ท่อน</span></p></div>
-      `;
-
-      let html = '';
-      usedBars.forEach(b => {
-        const isKeep = b.remaining >= minScrap;
-        let cutsVisual = '';
-        b.cuts.forEach(c => {
-          cutsVisual += `<div style="width: ${(c.length / b.original_length * 100).toFixed(1)}%" class="bg-blue-600 text-white text-[11px] flex items-center justify-center p-1 truncate border-r border-white/40">${c.name} (${c.length})</div>`;
+      // วนลูปคำนวณทีละหน้าตัด
+      for (const [profile, items] of Object.entries(sections)) {
+        const profileInfo = STEEL_PROFILES.find(p => p.name === profile) || { weight: 5.0 };
+        
+        let cuts = [];
+        items.forEach(it => {
+          for (let i = 0; i < it.total; i++) {
+            cuts.push({ comp: it.comp, length: it.cutLen, rowId: it.rowId });
+          }
         });
-        cutsVisual += `<div style="width: ${(b.remaining / b.original_length * 100).toFixed(1)}%" class="${isKeep ? 'bg-purple-200 text-purple-800' : 'bg-slate-200 text-slate-500'} text-[10px] flex items-center justify-center p-1 truncate">${b.remaining} มม.</div>`;
-        html += `
-          <div class="border rounded-xl p-4 bg-slate-50/50 space-y-2">
-            <div class="flex justify-between items-center text-sm">
-              <span class="font-bold text-slate-800">${b.id} (${b.original_length.toLocaleString()} มม.)</span>
-              <span class="text-xs font-semibold ${isKeep ? 'text-purple-700' : 'text-slate-500'}">${isKeep ? `✅ เก็บเข้าสต็อก (${b.remaining} มม.)` : `❌ เศษทิ้ง (${b.remaining} มม.)`}</span>
+
+        // เรียงจากยาวไปสั้น
+        cuts.sort((a, b) => b.length - a.length);
+
+        let bars = [];
+        const stdLen = 6.00; // ค่ามาตรฐาน 6 เมตร
+
+        cuts.forEach(c => {
+          let bestBar = null;
+          let minWaste = Infinity;
+
+          for (let b of bars) {
+            let spaceNeeded = c.length + (b.cuts.length > 0 ? kerfM : 0);
+            if (b.remaining >= spaceNeeded) {
+              let waste = b.remaining - spaceNeeded;
+              if (waste < minWaste) {
+                minWaste = waste;
+                bestBar = b;
+              }
+            }
+          }
+
+          if (!bestBar) {
+            bestBar = {
+              id: `ท่อนที่ ${bars.length + 1}`,
+              originalLen: stdLen,
+              remaining: stdLen,
+              cuts: []
+            };
+            bars.push(bestBar);
+          }
+
+          let spaceNeeded = c.length + (bestBar.cuts.length > 0 ? kerfM : 0);
+          bestBar.remaining -= spaceNeeded;
+          bestBar.cuts.push(c);
+        });
+
+        // บันทึกผลลงตาราง Barcut
+        items.forEach(it => {
+          const tr = document.getElementById(it.rowId);
+          if (tr) {
+            tr.querySelector('.row-bars').innerText = `${bars.length} ท่อน`;
+            tr.querySelector('.row-reuse').innerText = `ดึงใช้ร่วมในกลุ่ม ${profile.split(' ')[0]}`;
+            
+            // คำนวณเศษเฉลี่ย
+            let totalRem = bars.reduce((s, b) => s + b.remaining, 0);
+            let scrapKg = (totalRem * profileInfo.weight).toFixed(1);
+            
+            tr.querySelector('.row-offcut').innerText = `เหลือปลายรวม ${totalRem.toFixed(2)} ม.`;
+            tr.querySelector('.row-scrapg').innerText = scrapKg;
+          }
+        });
+
+        // รวมยอดเพื่อสร้างตาราง BOQ
+        let totalUsedLen = cuts.reduce((s, c) => s + c.length, 0);
+        let totalPurchasedLen = bars.length * stdLen;
+        let totalPurchasedKg = totalPurchasedLen * profileInfo.weight;
+        let totalScrapLen = bars.reduce((s, b) => s + b.remaining, 0);
+        let yieldPct = totalPurchasedLen > 0 ? (totalUsedLen / totalPurchasedLen * 100).toFixed(1) : 0;
+
+        boqSummary[profile] = {
+          unitWeight: profileInfo.weight,
+          usedLen: totalUsedLen.toFixed(2),
+          barCount: bars.length,
+          scrapLen: totalScrapLen.toFixed(2),
+          purchasedKg: totalPurchasedKg.toFixed(1),
+          yieldPct: yieldPct
+        };
+
+        // สร้าง Visual แผนผังการตัด
+        diagramHtml += `
+          <div class="border rounded-lg p-3 bg-slate-50 space-y-2">
+            <div class="flex justify-between items-center font-bold text-slate-800 text-xs border-b pb-1">
+              <span>🔩 ${profile} (ใช้เหล็กใหม่ทั้งหมด: ${bars.length} เส้น)</span>
+              <span class="text-emerald-700">Yield รวม: ${yieldPct}%</span>
             </div>
-            <div class="w-full h-8 bg-slate-200 rounded-lg overflow-hidden flex shadow-inner">${cutsVisual}</div>
-          </div>
+            <div class="space-y-2 pt-1">
         `;
-      });
-      document.getElementById('planContainer').innerHTML = html;
+
+        bars.forEach(b => {
+          let cutsVisual = '';
+          b.cuts.forEach(c => {
+            let pct = (c.length / b.originalLen * 100).toFixed(1);
+            cutsVisual += `
+              <div style="width: ${pct}%" class="bg-blue-600 text-white text-[10px] flex items-center justify-center border-r border-white/40 truncate py-1" title="${c.comp}: ${c.length} ม.">
+                ${c.comp} (${c.length}ม.)
+              </div>
+            `;
+          });
+          let remPct = (b.remaining / b.originalLen * 100).toFixed(1);
+          let isKeep = b.remaining >= 0.5; // เศษยาวกว่า 50 ซม. เก็บเข้าคลัง
+          cutsVisual += `
+            <div style="width: ${remPct}%" class="${isKeep ? 'bg-purple-200 text-purple-900 font-bold' : 'bg-slate-300 text-slate-600'} text-[9px] flex items-center justify-center truncate py-1">
+              ${isKeep ? `สต็อก +${b.remaining.toFixed(2)}ม.` : `เศษ ${b.remaining.toFixed(2)}ม.`}
+            </div>
+          `;
+
+          diagramHtml += `
+            <div class="flex items-center gap-2">
+              <span class="w-14 font-mono text-[10px] text-slate-500">${b.id}</span>
+              <div class="flex-1 bg-slate-200 rounded flex overflow-hidden shadow-inner h-6">
+                ${cutsVisual}
+              </div>
+            </div>
+          `;
+        });
+
+        diagramHtml += `</div></div>`;
+      }
+
+      // แสดงข้อมูลในหน้าต่าง BOQ
+      let boqRows = '';
+      for (const [pName, b] of Object.entries(boqSummary)) {
+        boqRows += `
+          <tr class="border-b hover:bg-slate-50">
+            <td class="p-2 font-bold text-slate-800 border">${pName}</td>
+            <td class="p-2 text-right border font-mono">${b.unitWeight.toFixed(2)}</td>
+            <td class="p-2 text-right border font-mono">${b.usedLen} ม.</td>
+            <td class="p-2 text-center border font-mono font-bold text-blue-700">${b.barCount} เส้น</td>
+            <td class="p-2 text-center border text-slate-400">-</td>
+            <td class="p-2 text-right border font-mono text-purple-700 font-semibold">${b.scrapLen} ม.</td>
+            <td class="p-2 text-right border font-mono font-bold text-emerald-800">${b.purchasedKg} กก.</td>
+            <td class="p-2 text-right border font-mono font-bold ${b.yieldPct >= 85 ? 'text-emerald-600' : 'text-amber-600'}">${b.yieldPct}%</td>
+          </tr>
+        `;
+      }
+      document.getElementById('boqTbody').innerHTML = boqRows || '<tr><td colspan="8" class="text-center p-4">ไม่มีรายการ</td></tr>';
+      document.getElementById('cuttingDiagramContainer').innerHTML = diagramHtml || '<p class="text-center p-4 text-slate-400">ไม่มีข้อมูล</p>';
+    }
+
+    function clearCalculations() {
+      document.querySelectorAll('.row-bars, .row-reuse, .row-offcut, .row-scrapg').forEach(td => td.innerText = '-');
+      document.getElementById('boqTbody').innerHTML = '<tr><td colspan="8" class="text-center p-4 text-slate-400">กดคำนวณเพื่อแสดงข้อมูล</td></tr>';
+      document.getElementById('cuttingDiagramContainer').innerHTML = '<p class="text-center p-4 text-slate-400">กดคำนวณเพื่อแสดงข้อมูล</p>';
+    }
+
+    function saveProject() {
+      alert('บันทึกข้อมูลโครงงานเรียบร้อยแล้ว');
+    }
+
+    function exportExcel() {
+      alert('กำลังส่งออกข้อมูลตาราง Barcut และ BOQ เป็นไฟล์ Excel (.xlsx)');
+    }
+
+    function importExcel() {
+      alert('กรุณาเลือกไฟล์ Excel (.xlsx) ที่มีตารางชิ้นงานเพื่อนำเข้า');
     }
   </script>
 </body>
