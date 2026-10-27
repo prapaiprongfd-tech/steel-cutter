@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Barcut - ตารางคำนวณสั่งตัดเหล็กรูปพรรณ</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }</style>
+</head>
+<body class="bg-slate-100 text-slate-800 p-4 md:p-8">
+  <div class="max-w-5xl mx-auto space-y-6">
+    <div class="bg-gradient-to-r from-slate-900 to-blue-900 text-white p-6 rounded-2xl shadow-lg flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div>
+        <h1 class="text-2xl font-bold flex items-center gap-2">
+          <span class="bg-blue-500 text-white rounded-lg px-2.5 py-1 text-lg">B</span>
+          Barcut - ระบบคำนวณตัดเหล็กรูปพรรณและคลังเศษ
+        </h1>
+        <p class="text-slate-300 text-sm mt-1">ดึงเศษเดิมในคลังมาใช้ก่อน + คำนวณรอยตัดใบเลื่อย + เก็บเศษใหม่เข้าสต็อก</p>
+      </div>
+      <button onclick="calculatePlan()" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-6 py-3 rounded-xl shadow transition transform active:scale-95 text-lg">
+        ⚡ คำนวณแผนการตัด
+      </button>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+        <h2 class="font-bold text-slate-700 border-b pb-2">⚙️ ตั้งค่าการตัด</h2>
+        <div>
+          <label class="text-xs font-semibold text-slate-500">ความยาวเหล็กมาตรฐาน (มม.)</label>
+          <input id="stdLength" type="number" value="6000" class="w-full mt-1 border rounded-lg px-3 py-2 text-sm bg-slate-50">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-slate-500">รอยตัด/ใบตัดกินเนื้อ (มม.)</label>
+          <input id="kerf" type="number" value="3" class="w-full mt-1 border rounded-lg px-3 py-2 text-sm bg-slate-50">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-slate-500">ความยาวเศษขั้นต่ำที่จะเก็บสต็อก (มม.)</label>
+          <input id="minScrap" type="number" value="500" class="w-full mt-1 border rounded-lg px-3 py-2 text-sm bg-slate-50">
+        </div>
+      </div>
+
+      <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 md:col-span-2 space-y-3">
+        <h2 class="font-bold text-slate-700 border-b pb-2">📦 เศษเหล็กเดิมในคลัง (ใส่คั่นด้วยจุลภาค ,)</h2>
+        <p class="text-xs text-slate-500">ระบบจะดึงเศษเหล่านี้มาตัดให้ก่อนเปิดเหล็กเส้นใหม่ 6.00 ม.</p>
+        <textarea id="existingScraps" rows="3" placeholder="ตัวอย่าง: 2500, 1900, 1300, 800" class="w-full border rounded-xl p-3 text-sm bg-slate-50 outline-none">2500, 1900, 1300, 800</textarea>
+      </div>
+    </div>
+
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+      <div class="flex justify-between items-center border-b pb-3">
+        <h2 class="font-bold text-slate-700 text-lg">📋 รายการชิ้นงานที่ต้องตัด</h2>
+        <button onclick="addRow()" class="bg-blue-50 text-blue-600 hover:bg-blue-100 font-semibold px-4 py-1.5 rounded-lg text-sm transition">
+          + เพิ่มแถว
+        </button>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse" id="cutsTable">
+          <thead>
+            <tr class="text-xs font-semibold text-slate-400 border-b">
+              <th class="py-2 px-3">ชื่อชิ้นงาน / มาร์คเกอร์</th>
+              <th class="py-2 px-3 w-40">ความยาว (มม.)</th>
+              <th class="py-2 px-3 w-32">จำนวน (ชิ้น)</th>
+              <th class="py-2 px-3 w-20 text-center">ลบ</th>
+            </tr>
+          </thead>
+          <tbody id="cutsBody" class="divide-y divide-slate-100 text-sm">
+            <tr>
+              <td class="py-2 px-3"><input type="text" value="เสา C-1" class="w-full border rounded-lg px-2.5 py-1.5"></td>
+              <td class="py-2 px-3"><input type="number" value="2400" class="cut-len w-full border rounded-lg px-2.5 py-1.5 font-mono"></td>
+              <td class="py-2 px-3"><input type="number" value="5" class="cut-qty w-full border rounded-lg px-2.5 py-1.5 font-mono"></td>
+              <td class="py-2 px-3 text-center"><button onclick="deleteRow(this)" class="text-rose-500 hover:text-rose-700 font-bold">✕</button></td>
+            </tr>
+            <tr>
+              <td class="py-2 px-3"><input type="text" value="คาน B-1" class="w-full border rounded-lg px-2.5 py-1.5"></td>
+              <td class="py-2 px-3"><input type="number" value="1800" class="cut-len w-full border rounded-lg px-2.5 py-1.5 font-mono"></td>
+              <td class="py-2 px-3"><input type="number" value="4" class="cut-qty w-full border rounded-lg px-2.5 py-1.5 font-mono"></td>
+              <td class="py-2 px-3 text-center"><button onclick="deleteRow(this)" class="text-rose-500 hover:text-rose-700 font-bold">✕</button></td>
+            </tr>
+            <tr>
+              <td class="py-2 px-3"><input type="text" value="จันทัน R-1" class="w-full border rounded-lg px-2.5 py-1.5"></td>
+              <td class="py-2 px-3"><input type="number" value="1250" class="cut-len w-full border rounded-lg px-2.5 py-1.5 font-mono"></td>
+              <td class="py-2 px-3"><input type="number" value="6" class="cut-qty w-full border rounded-lg px-2.5 py-1.5 font-mono"></td>
+              <td class="py-2 px-3 text-center"><button onclick="deleteRow(this)" class="text-rose-500 hover:text-rose-700 font-bold">✕</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="resultSection" class="hidden space-y-6">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="statsGrid"></div>
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+        <h2 class="font-bold text-slate-700 text-lg">📑 แผนผังการตัดทีละท่อน (Cutting Plan)</h2>
+        <div id="planContainer" class="space-y-4"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function addRow() {
+      const tbody = document.getElementById('cutsBody');
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td class="py-2 px-3"><input type="text" placeholder="ระบุชื่อชิ้นงาน" class="w-full border rounded-lg px-2.5 py-1.5"></td>
+        <td class="py-2 px-3"><input type="number" placeholder="0" class="cut-len w-full border rounded-lg px-2.5 py-1.5 font-mono"></td>
+        <td class="py-2 px-3"><input type="number" placeholder="1" value="1" class="cut-qty w-full border rounded-lg px-2.5 py-1.5 font-mono"></td>
+        <td class="py-2 px-3 text-center"><button onclick="deleteRow(this)" class="text-rose-500 hover:text-rose-700 font-bold">✕</button></td>
+      `;
+      tbody.appendChild(tr);
+    }
+    function deleteRow(btn) { btn.closest('tr').remove(); }
+    function calculatePlan() {
+      const stdLength = parseFloat(document.getElementById('stdLength').value) || 6000;
+      const kerf = parseFloat(document.getElementById('kerf').value) || 3;
+      const minScrap = parseFloat(document.getElementById('minScrap').value) || 500;
+      const existingScraps = document.getElementById('existingScraps').value.split(',').map(s => parseFloat(s.trim())).filter(n => !isNaN(n) && n > 0).sort((a, b) => b - a);
+      const rows = document.querySelectorAll('#cutsBody tr');
+      let cuts = [];
+      rows.forEach(r => {
+        const name = r.querySelector('input[type="text"]').value.trim() || 'ชิ้นงาน';
+        const len = parseFloat(r.querySelector('.cut-len').value) || 0;
+        const qty = parseInt(r.querySelector('.cut-qty').value) || 0;
+        if (len > 0 && qty > 0) {
+          for (let i = 0; i < qty; i++) cuts.push({ name, length: len });
+        }
+      });
+      if (cuts.length === 0) { alert('กรุณากรอกรายการชิ้นงานอย่างน้อย 1 รายการ'); return; }
+      cuts.sort((a, b) => b.length - a.length);
+
+      let bars = [];
+      existingScraps.forEach((sc, idx) => bars.push({ id: `เศษเดิม #${idx + 1}`, type: 'scrap', original_length: sc, remaining: sc, cuts: [] }));
+      let unplaced = [];
+
+      cuts.forEach(cut => {
+        let bestBar = null, minWaste = Infinity;
+        bars.filter(b => b.type === 'scrap').forEach(b => {
+          const needed = cut.length + (b.cuts.length > 0 ? kerf : 0);
+          if (b.remaining >= needed && (b.remaining - needed) < minWaste) { minWaste = b.remaining - needed; bestBar = b; }
+        });
+        if (!bestBar) {
+          minWaste = Infinity;
+          bars.filter(b => b.type === 'new').forEach(b => {
+            const needed = cut.length + (b.cuts.length > 0 ? kerf : 0);
+            if (b.remaining >= needed && (b.remaining - needed) < minWaste) { minWaste = b.remaining - needed; bestBar = b; }
+          });
+        }
+        if (!bestBar) {
+          if (cut.length > stdLength) { unplaced.push(cut); return; }
+          const newBar = { id: `เหล็กเส้นใหม่ #${bars.filter(b => b.type === 'new').length + 1}`, type: 'new', original_length: stdLength, remaining: stdLength, cuts: [] };
+          bars.push(newBar); bestBar = newBar;
+        }
+        bestBar.remaining -= cut.length + (bestBar.cuts.length > 0 ? kerf : 0);
+        bestBar.cuts.push(cut);
+      });
+
+      const usedBars = bars.filter(b => b.cuts.length > 0);
+      document.getElementById('resultSection').classList.remove('hidden');
+      const newCount = usedBars.filter(b => b.type === 'new').length;
+      const reusedCount = usedBars.filter(b => b.type === 'scrap').length;
+      let totalCut = 0, totalRaw = 0, newScraps = [];
+      usedBars.forEach(b => {
+        b.cuts.forEach(c => totalCut += c.length);
+        totalRaw += b.original_length;
+        if (b.remaining >= minScrap) newScraps.push(b.remaining);
+      });
+      const yieldPct = totalRaw > 0 ? (totalCut / totalRaw * 100).toFixed(1) : 0;
+
+      document.getElementById('statsGrid').innerHTML = `
+        <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl text-center"><p class="text-xs text-blue-600 font-semibold">เบิกเหล็กใหม่ (6 ม.)</p><p class="text-2xl font-bold text-blue-900 mt-1">${newCount} <span class="text-sm font-normal">เส้น</span></p></div>
+        <div class="bg-amber-50 border border-amber-200 p-4 rounded-xl text-center"><p class="text-xs text-amber-600 font-semibold">ดึงเศษเดิมมาใช้</p><p class="text-2xl font-bold text-amber-900 mt-1">${reusedCount} <span class="text-sm font-normal">ท่อน</span></p></div>
+        <div class="bg-emerald-50 border border-emerald-200 p-4 rounded-xl text-center"><p class="text-xs text-emerald-600 font-semibold">อัตราใช้เนื้อเหล็ก</p><p class="text-2xl font-bold text-emerald-900 mt-1">${yieldPct}%</p></div>
+        <div class="bg-purple-50 border border-purple-200 p-4 rounded-xl text-center"><p class="text-xs text-purple-600 font-semibold">เศษใหม่เก็บเข้าสต็อก</p><p class="text-2xl font-bold text-purple-900 mt-1">${newScraps.length} <span class="text-sm font-normal">ท่อน</span></p></div>
+      `;
+
+      let html = '';
+      usedBars.forEach(b => {
+        const isKeep = b.remaining >= minScrap;
+        let cutsVisual = '';
+        b.cuts.forEach(c => {
+          cutsVisual += `<div style="width: ${(c.length / b.original_length * 100).toFixed(1)}%" class="bg-blue-600 text-white text-[11px] flex items-center justify-center p-1 truncate border-r border-white/40">${c.name} (${c.length})</div>`;
+        });
+        cutsVisual += `<div style="width: ${(b.remaining / b.original_length * 100).toFixed(1)}%" class="${isKeep ? 'bg-purple-200 text-purple-800' : 'bg-slate-200 text-slate-500'} text-[10px] flex items-center justify-center p-1 truncate">${b.remaining} มม.</div>`;
+        html += `
+          <div class="border rounded-xl p-4 bg-slate-50/50 space-y-2">
+            <div class="flex justify-between items-center text-sm">
+              <span class="font-bold text-slate-800">${b.id} (${b.original_length.toLocaleString()} มม.)</span>
+              <span class="text-xs font-semibold ${isKeep ? 'text-purple-700' : 'text-slate-500'}">${isKeep ? `✅ เก็บเข้าสต็อก (${b.remaining} มม.)` : `❌ เศษทิ้ง (${b.remaining} มม.)`}</span>
+            </div>
+            <div class="w-full h-8 bg-slate-200 rounded-lg overflow-hidden flex shadow-inner">${cutsVisual}</div>
+          </div>
+        `;
+      });
+      document.getElementById('planContainer').innerHTML = html;
+    }
+  </script>
+</body>
+</html>
