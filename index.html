@@ -14,25 +14,36 @@
     input[type=number]::-webkit-inner-spin-button, 
     input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
 
-    /* การตั้งค่าสำหรับการพิมพ์เอกสาร (Print Layout) ให้พิมพ์ครบทุกชีท */
+    /* การตั้งค่าสำหรับการพิมพ์เอกสาร ให้คงสีจริงเหมือนหน้าจอ 100% */
     @media print {
       @page {
         size: landscape;
         margin: 8mm 6mm 8mm 6mm;
       }
-      body {
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+        box-sizing: border-box !important;
+      }
+      html, body {
         background-color: white !important;
-        color: black !important;
+        color: #0f172a !important;
         font-size: 11px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
       }
       .no-print {
         display: none !important;
       }
-      /* บังคับให้แสดงทุกชีทออกมาทั้งหมดตอนพิมพ์ */
+      /* แสดงทุกชีทต่อเนื่องกัน */
       #tab-barcut, #tab-boq, #tab-cuttingSheet {
         display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
       }
-      /* ขึ้นหน้าใหม่สำหรับชีท BOQ และชีทแผนผังการตัด */
       #tab-boq {
         page-break-before: always !important;
         break-before: page !important;
@@ -61,7 +72,7 @@
         box-shadow: none !important;
         padding: 0 !important;
         margin: 0 !important;
-        color: black !important;
+        color: inherit !important;
         font-weight: 800 !important;
         width: 100% !important;
         appearance: none !important;
@@ -77,11 +88,14 @@
         display: none !important;
       }
       table, th, td {
-        border-color: #334155 !important;
+        border-color: #94a3b8 !important;
       }
-      th {
-        background-color: #f1f5f9 !important;
-        color: black !important;
+      /* ให้คงสีพื้นหลังของแต่ละเซลล์ (th, td) ตามที่กำหนดไว้ในหน้าจอจริง */
+      .bar-visual-container {
+        height: 32px !important;
+        width: 100% !important;
+        display: flex !important;
+        overflow: hidden !important;
       }
     }
   </style>
@@ -221,12 +235,9 @@
               <th class="py-2.5 px-1 border-r border-slate-300 bg-yellow-200 text-amber-950 font-black w-12">รวมชิ้น<br><span class="text-[11px] text-amber-800 font-bold">TOTAL</span></th>
               <th class="py-2.5 px-2 border-r border-slate-300 bg-cyan-100 text-cyan-950 font-black w-28">ยาวตัด/ชิ้น (ม.)<br><span class="text-[11px] text-cyan-700 font-bold">CUT LENGTH</span></th>
               <th class="py-2.5 px-2 border-r border-slate-300 bg-amber-200 text-amber-950 font-black w-24">พ.ท. ทาสีรวม<br><span class="text-[11px] text-amber-800 font-bold">(ตร.ม.)</span></th>
-              
-              <!-- แยก 2 ช่อง: 1. ท่อนหลักเบิกเส้นใหม่  2. ดึงเศษจาก No. -->
               <th class="py-2.5 px-2 border-r border-slate-300 bg-cyan-200 text-cyan-950 font-black w-28">ท่อนหลัก (BARS)<br><span class="text-[11px] text-cyan-800 font-bold">เบิกเส้นใหม่</span></th>
               <th class="py-2.5 px-2 border-r border-slate-300 bg-emerald-200 text-emerald-950 font-black w-48">ดึงเศษจาก No.<br><span class="text-[11px] text-emerald-800 font-bold">นำเศษมาใช้</span></th>
-
-              <th class="py-2.5 px-2 border-r border-slate-300 bg-rose-100 text-rose-950 font-black w-56">รายละเอียดเศษเหลือ (OFFCUT)<br><span class="text-[11px] text-rose-700 font-bold">นำไปใช้ต่อใน No. / เก็บสต็อก</span></th>
+              <th class="py-2.5 px-2 border-r border-slate-300 bg-rose-100 text-rose-950 font-black w-60">รายละเอียดเศษเหลือ (OFFCUT)<br><span class="text-[11px] text-rose-700 font-bold">นำไปใช้ต่อใน No. / เก็บสต็อก</span></th>
               <th class="py-2.5 px-2 border-r border-slate-300 bg-rose-200 text-rose-950 font-black w-20">น.น. เศษ<br><span class="text-[11px] text-rose-800 font-bold">(กก.)</span></th>
               <th class="py-2.5 px-2 w-16 text-slate-800 font-black col-action">จัดการ</th>
             </tr>
@@ -239,7 +250,6 @@
     <!-- 2. ตาราง BOQ -->
     <div id="tab-boq" class="hidden bg-white p-5 rounded-lg border-2 border-slate-300 shadow space-y-4">
       
-      <!-- หัวกระดาษพิมพ์สำหรับชีท BOQ -->
       <div class="hidden print-sheet-header mb-3 border-b-2 border-slate-800 pb-2">
         <div class="flex justify-between items-center text-xs font-black text-black">
           <span class="text-sm">🏗️ <b>สรุปรายการสั่งซื้อเหล็ก และพื้นที่ทาสีโครงการ (BOQ Summary)</b></span>
@@ -275,7 +285,6 @@
     <!-- 3. แผนผังการตัด -->
     <div id="tab-cuttingSheet" class="hidden bg-white p-5 rounded-lg border-2 border-slate-300 shadow space-y-4">
       
-      <!-- หัวกระดาษพิมพ์สำหรับชีท แผนผังการตัด -->
       <div class="hidden print-sheet-header mb-3 border-b-2 border-slate-800 pb-2">
         <div class="flex justify-between items-center text-xs font-black text-black">
           <span class="text-sm">🏗️ <b>แผนผังการจัดตัดเหล็กทีละท่อน & การหมุนเวียนเศษ (Cutting Pattern)</b></span>
@@ -288,7 +297,7 @@
       <h2 class="text-base font-black text-slate-800 flex items-center gap-2 border-b-2 pb-2 no-print">
         <i class="fa-solid fa-bars-staggered text-purple-600"></i> แผนผังการจัดตัดเหล็กทีละท่อน & การหมุนเวียนเศษ (Cutting Pattern)
       </h2>
-      <div id="cuttingDiagramContainer" class="space-y-4"></div>
+      <div id="cuttingDiagramContainer" class="space-y-4 w-full"></div>
     </div>
 
   </div>
@@ -536,7 +545,6 @@
       document.getElementById('cuttingDiagramContainer').innerHTML = '<p class="text-center p-6 text-slate-500 font-bold">กดคำนวณเพื่อแสดงแผนผังการตัด</p>';
     }
 
-    // ฟังก์ชันคำนวณตัดเหล็กและจัดกลุ่มลง 2 ช่องชัดเจน
     function calculateCutting(isSilent = false) {
       const kerfM = (parseFloat(document.getElementById('kerfInput').value) || 3) / 1000;
       const minScrapM = (parseFloat(document.getElementById('minScrapInput').value) || 500) / 1000;
@@ -603,7 +611,6 @@
           }
         });
 
-        // จัดเรียงชิ้นงานยาวไปสั้น
         cuts.sort((a, b) => b.length - a.length);
 
         let bars = [];
@@ -640,7 +647,6 @@
           bestBar.cuts.push(c);
         });
 
-        // จัดกลุ่มชิ้นงานในท่อนเดียวกันที่มาจากแถวเดียวกัน (Group consecutive cuts by row)
         bars.forEach(b => {
           let groupsInBar = [];
           b.cuts.forEach(c => {
@@ -651,7 +657,6 @@
             }
           });
 
-          // วิเคราะห์ที่มา และการส่งต่อเศษ
           groupsInBar.forEach((g, idx) => {
             const qty = g.cuts.length;
 
@@ -670,6 +675,8 @@
               const nextGroup = groupsInBar[idx + 1];
               g.hasPass = true;
               g.passTo = nextGroup.rowNo;
+              g.passLen = nextGroup.len;
+              g.passQty = nextGroup.cuts.length;
             } else {
               g.isLastInBar = true;
               g.finalRemainder = Math.max(0, b.remaining);
@@ -679,15 +686,13 @@
           b.rowGroups = groupsInBar;
         });
 
-        // สรุปข้อมูลลงแต่ละแถวรายการ
         group.items.forEach(it => {
           const tr = document.getElementById(it.rowId);
           if (!tr) return;
 
           let newBarsTotal = 0;
-          let reuseMap = {}; // "len|fromRow" -> total pieces
-
-          let passMap = {}; // "nextRow" -> count of bars passed
+          let reuseMap = {};
+          let passMap = {};
           let remList = [];
           let rowScrapWeight = 0;
 
@@ -702,7 +707,8 @@
                 }
 
                 if (g.hasPass) {
-                  passMap[g.passTo] = (passMap[g.passTo] || 0) + 1;
+                  const passKey = `${g.passLen.toFixed(2)}|${g.passTo}`;
+                  passMap[passKey] = (passMap[passKey] || 0) + g.passQty;
                 }
                 if (g.isLastInBar) {
                   remList.push(g.finalRemainder);
@@ -712,14 +718,12 @@
             });
           });
 
-          // 1. ช่อง ท่อนหลัก (BARS) เบิกเส้นใหม่
           if (newBarsTotal > 0) {
             tr.querySelector('.row-bars-new').innerHTML = `<span class="bg-cyan-100 text-cyan-950 px-2 py-0.5 rounded font-black border border-cyan-300">${newBarsTotal} เส้น</span>`;
           } else {
             tr.querySelector('.row-bars-new').innerText = '-';
           }
 
-          // 2. ช่อง ดึงเศษจาก No.
           let reuseParts = [];
           for (const [key, qty] of Object.entries(reuseMap)) {
             const [len, fromNo] = key.split('|');
@@ -727,10 +731,10 @@
           }
           tr.querySelector('.row-bars-reuse').innerHTML = reuseParts.length > 0 ? reuseParts.join('<br>') : '-';
 
-          // 3. ช่อง รายละเอียดเศษเหลือ (OFFCUT)
           let finalOffcuts = [];
-          for (const [nextNo, count] of Object.entries(passMap)) {
-            finalOffcuts.push(`ส่งต่อเศษ ${count} ท่อน (นำไปใช้ใน No.${nextNo})`);
+          for (const [key, qty] of Object.entries(passMap)) {
+            const [len, nextNo] = key.split('|');
+            finalOffcuts.push(`ส่งต่อเศษ ${len} m ${qty} ท่อน (นำไปใช้ใน No.${nextNo})`);
           }
 
           let remCounts = {};
@@ -760,7 +764,6 @@
           tr.querySelector('.row-scrapg').innerText = rowScrapWeight > 0 ? rowScrapWeight.toFixed(2) : '-';
         });
 
-        // สรุปยอดเข้าตาราง BOQ
         let totalUsedLen = cuts.reduce((s, c) => s + c.length, 0);
         let totalPurchasedLen = bars.length * stdLen;
         let totalPurchasedKg = totalPurchasedLen * group.weight;
@@ -782,14 +785,13 @@
           yieldPct: yieldPct
         };
 
-        // ไดอะแกรมแผนผังการตัด
         diagramHtml += `
-          <div class="border-2 border-slate-300 rounded-lg p-3.5 bg-slate-50 space-y-2">
+          <div class="border-2 border-slate-300 rounded-lg p-3 bg-slate-50 space-y-2 w-full">
             <div class="flex justify-between items-center font-black text-slate-900 text-sm border-b-2 border-slate-200 pb-1.5">
               <span>🔩 หน้าตัด: ${group.displayName} (เบิกเหล็กใหม่รวม ${bars.length} เส้น)</span>
               <span class="text-cyan-800">พ.ท. ทาสี: ${totalPaintArea.toFixed(2)} ตร.ม. | Yield: ${yieldPct}%</span>
             </div>
-            <div class="space-y-2 pt-1">
+            <div class="space-y-2 pt-1 w-full">
         `;
 
         bars.forEach(b => {
@@ -797,7 +799,7 @@
           b.cuts.forEach(c => {
             let pct = (c.length / b.originalLen * 100).toFixed(1);
             cutsVisual += `
-              <div style="width: ${pct}%" class="bg-cyan-700 text-white font-bold text-xs flex items-center justify-center border-r-2 border-white/60 truncate py-1.5" title="No.${c.rowNo} ${c.comp} (${c.length} ม.)">
+              <div style="width: ${pct}%; min-width: 50px;" class="bg-cyan-700 text-white font-bold text-[11px] flex items-center justify-center border-r-2 border-white/60 shrink-0 whitespace-nowrap px-1" title="No.${c.rowNo} ${c.comp} (${c.length} ม.)">
                 No.${c.rowNo} (${c.length}ม.)
               </div>
             `;
@@ -805,16 +807,25 @@
           let rem = Math.max(0, b.remaining);
           let remPct = (rem / b.originalLen * 100).toFixed(1);
           let isKeep = rem >= minScrapM;
+          let remLabel = '';
+          if (isKeep) {
+            remLabel = `สต็อก +${rem.toFixed(2)}ม.`;
+          } else if (rem > 0.05) {
+            remLabel = `เศษ ${rem.toFixed(2)}ม.`;
+          } else {
+            remLabel = `พอดี`;
+          }
+
           cutsVisual += `
-            <div style="width: ${remPct}%" class="${isKeep ? 'bg-purple-200 text-purple-950 font-black' : 'bg-slate-300 text-slate-700 font-bold'} text-xs flex items-center justify-center truncate py-1.5">
-              ${isKeep ? `สต็อก +${rem.toFixed(2)}ม.` : `เศษ ${rem.toFixed(2)}ม.`}
+            <div style="width: ${remPct}%; min-width: 68px;" class="${isKeep ? 'bg-purple-200 text-purple-950 font-black' : 'bg-slate-300 text-slate-800 font-bold'} text-[11px] flex items-center justify-center shrink-0 whitespace-nowrap px-1 border-l border-slate-400" title="${remLabel}">
+              ${remLabel}
             </div>
           `;
 
           diagramHtml += `
-            <div class="flex items-center gap-2">
-              <span class="w-20 font-mono text-xs text-slate-700 font-black">เส้น #${b.barIndex}</span>
-              <div class="flex-1 bg-slate-200 rounded-md flex overflow-hidden border border-slate-400 shadow-inner h-8">
+            <div class="flex items-center gap-2 w-full">
+              <span class="w-16 font-mono text-xs text-slate-700 font-black shrink-0">เส้น #${b.barIndex}</span>
+              <div class="flex-1 bg-slate-200 rounded-md flex overflow-hidden border border-slate-400 shadow-inner h-8 bar-visual-container">
                 ${cutsVisual}
               </div>
             </div>
@@ -930,7 +941,6 @@
       }
     }
 
-    // ฟังก์ชันส่งออก Excel ที่รองรับ 2 ช่องแยกใหม่
     function exportToCSV() {
       calculateCutting(true);
 
