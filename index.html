@@ -67,23 +67,25 @@
         word-break: break-word !important;
       }
 
+      /* ปรับแต่งป้ายจำนวนเส้นหลักให้ขนาดพอดี สบายตา */
       .bars-main-badge {
-        font-size: 14px !important;
-        font-weight: 900 !important;
+        font-size: 11px !important;
+        font-weight: 700 !important;
         color: #0c4a6e !important;
-        background-color: #bae6fd !important;
-        border: 2px solid #0284c7 !important;
-        padding: 2px 8px !important;
+        background-color: #e0f2fe !important;
+        border: 1px solid #7dd3fc !important;
+        padding: 1px 6px !important;
         border-radius: 4px !important;
+        white-space: nowrap !important;
         display: inline-block !important;
       }
       .splice-note {
-        font-size: 9px !important;
+        font-size: 8.5px !important;
         color: #64748b !important;
         font-weight: normal !important;
         display: block !important;
-        margin-top: 2px !important;
-        line-height: 1.2 !important;
+        margin-top: 1px !important;
+        line-height: 1.1 !important;
       }
 
       .cutting-bar-row {
@@ -92,7 +94,7 @@
         margin-bottom: 4px !important;
       }
       .bar-visual-container {
-        height: 28px !important;
+        height: 30px !important;
         width: 100% !important;
         display: flex !important;
         overflow: hidden !important;
@@ -164,7 +166,7 @@
           <span class="text-slate-600 font-bold">มม.</span>
         </div>
         <span class="text-xs text-emerald-800 bg-emerald-100 px-3 py-1.5 rounded border border-emerald-300 font-bold flex items-center gap-1">
-          <i class="fa-solid fa-calculator"></i> พิมพ์สูตรคำนวณได้ | ระบบสรุปรวบผังตัดเหล็กที่มีรูปแบบเหมือนกันให้อัตโนมัติ
+          <i class="fa-solid fa-calculator"></i> พิมพ์สูตรคำนวณได้ | สรุปรวบท่อนตัดและแสดงผังชัดเจนครบทุกตัวอักษร
         </span>
       </div>
 
@@ -201,7 +203,8 @@
               <th class="py-2.5 px-1 border-r border-slate-300 bg-yellow-200 text-amber-950 font-black w-12">รวมชิ้น<br><span class="text-[11px] text-amber-800 font-bold">TOTAL</span></th>
               <th class="py-2.5 px-2 border-r border-slate-300 bg-cyan-100 text-cyan-950 font-black w-28">ยาวตัด/ชิ้น (ม.)<br><span class="text-[11px] text-cyan-700 font-bold">CUT LENGTH</span></th>
               <th class="py-2.5 px-2 border-r border-slate-300 bg-amber-200 text-amber-950 font-black w-24">พ.ท. ทาสีรวม<br><span class="text-[11px] text-amber-800 font-bold">(ตร.ม.)</span></th>
-              <th class="py-2.5 px-2 border-r border-slate-300 bg-cyan-200 text-cyan-950 font-black w-36">ท่อนหลัก (BARS)<br><span class="text-[11px] text-cyan-800 font-bold">เบิกเส้นใหม่</span></th>
+              <!-- ปรับขนาดคอลัมน์และป้ายให้สบายตา -->
+              <th class="py-2.5 px-2 border-r border-slate-300 bg-cyan-200 text-cyan-950 font-black w-32">ท่อนหลัก (BARS)<br><span class="text-[11px] text-cyan-800 font-bold">เบิกเส้นใหม่</span></th>
               <th class="py-2.5 px-2 border-r border-slate-300 bg-emerald-200 text-emerald-950 font-black w-48">ดึงเศษจาก No.<br><span class="text-[11px] text-emerald-800 font-bold">นำเศษมาใช้</span></th>
               <th class="py-2.5 px-2 border-r border-slate-300 bg-rose-100 text-rose-950 font-black w-60">รายละเอียดเศษเหลือ (OFFCUT)<br><span class="text-[11px] text-rose-700 font-bold">นำไปใช้ต่อใน No. / เก็บสต็อก</span></th>
               <th class="py-2.5 px-2 border-r border-slate-300 bg-rose-200 text-rose-950 font-black w-20">น.น. เศษ<br><span class="text-[11px] text-rose-800 font-bold">(กก.)</span></th>
@@ -244,7 +247,7 @@
       </div>
     </div>
 
-    <!-- 3. แผนผังการตัด (สรุปรวบแถวอัตโนมัติ) -->
+    <!-- 3. แผนผังการตัด -->
     <div id="tab-cuttingSheet" class="hidden bg-white p-5 rounded-lg border-2 border-slate-300 shadow space-y-4">
       <div class="hidden print-sheet-header mb-3 border-b-2 border-slate-800 pb-2">
         <div class="flex justify-between items-center text-xs font-black text-black">
@@ -462,7 +465,1449 @@
         </td>
         <td class="py-1 px-1 border-r border-slate-300 bg-amber-100 font-mono font-black text-amber-950 text-sm row-paint-total">-</td>
         
-        <td class="py-1 px-1.5 border-r border-slate-300 bg-cyan-50/70 font-black text-cyan-950 text-xs text-center row-bars-new">-</td>
+        <!-- ช่องท่อนหลักเบิกใหม่: ปรับให้ขนาดพอดี สบายตา -->
+        <td class="py-1 px-1.5 border-r border-slate-300 bg-cyan-50/70 font-bold text-cyan-950 text-xs text-center row-bars-new">-</td>
+        <td class="py-1 px-2 border-r border-slate-300 bg-emerald-50/70 font-bold text-emerald-950 text-xs text-left row-bars-reuse">-</td>
+
+        <td class="py-1 px-2 border-r border-slate-300 bg-rose-50 text-xs font-bold text-rose-950 text-left row-offcut">-</td>
+        <td class="py-1 px-1 border-r border-slate-300 bg-rose-100 font-mono font-black text-rose-950 text-sm row-scrapg">-</td>
+        <td class="py-1 px-1 col-action">
+          <div class="flex items-center justify-center gap-2 text-slate-500">
+            <button onclick="cloneRow(${rowCount})" title="คัดลอกแถว" class="hover:text-amber-600 text-sm"><i class="fa-regular fa-copy"></i></button>
+            <button onclick="deleteRow(${rowCount})" title="ลบแถว" class="hover:text-rose-600 font-bold text-sm"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+        </td>
+      `;
+      tbody.appendChild(tr);
+
+      if (data) {
+        if (data.comp !== undefined) tr.querySelector('.row-comp').value = data.comp;
+        if (data.profile !== undefined) tr.querySelector('.row-profile').value = data.profile;
+        if (data.stock !== undefined) tr.querySelector('.row-stock').value = data.stock;
+      }
+
+      updateRowNumbers();
+      updateRowCalc(rowCount);
+
+      if (autoFocus) {
+        setTimeout(() => {
+          const firstInput = tr.querySelector('.row-comp');
+          if (firstInput) {
+            firstInput.focus();
+            if (firstInput.select) firstInput.select();
+          }
+        }, 50);
+      }
+    }
+
+    function updateRowNumbers() {
+      const rows = document.querySelectorAll('#barcutTbody tr');
+      rows.forEach((tr, i) => {
+        const idxTd = tr.querySelector('.row-idx');
+        if (idxTd) idxTd.innerText = i + 1;
+      });
+    }
+
+    function updateRowCalc(id) {
+      const tr = document.getElementById(`row-${id}`);
+      if (!tr) return;
+      const set = parseFloat(tr.querySelector('.row-set').value) || 0;
+      const qty = parseFloat(tr.querySelector('.row-qty').value) || 0;
+      const totalPieces = set * qty;
+      tr.querySelector('.row-total').innerText = totalPieces;
+
+      const cutLenEl = tr.querySelector('.row-cutlen');
+      const paintEl = tr.querySelector('.row-paint-factor');
+
+      const cutLen = parseFloat(evaluateFormula(cutLenEl.dataset.formula || cutLenEl.value)) || 0;
+      const paintFactor = parseFloat(evaluateFormula(paintEl.dataset.formula || paintEl.value)) || 0;
+
+      if (cutLen > 0 && totalPieces > 0 && paintFactor > 0) {
+        tr.querySelector('.row-paint-total').innerText = (cutLen * totalPieces * paintFactor).toFixed(2);
+      } else {
+        tr.querySelector('.row-paint-total').innerText = "-";
+      }
+    }
+
+    function deleteRow(id) {
+      const tr = document.getElementById(`row-${id}`);
+      if (tr) {
+        tr.remove();
+        updateRowNumbers();
+        triggerAutoCalc();
+      }
+    }
+
+    function cloneRow(id) {
+      const tr = document.getElementById(`row-${id}`);
+      if (!tr) return;
+
+      const getFormulaOrVal = (selector) => {
+        const el = tr.querySelector(selector);
+        return el ? (el.dataset.formula || el.value) : '';
+      };
+
+      addNewRow({
+        comp: tr.querySelector('.row-comp').value + " (สำเนา)",
+        profile: tr.querySelector('.row-profile').value,
+        weight: getFormulaOrVal('.row-weight'),
+        paintFactor: getFormulaOrVal('.row-paint-factor'),
+        stock: tr.querySelector('.row-stock').value,
+        set: tr.querySelector('.row-set').value,
+        qty: tr.querySelector('.row-qty').value,
+        cutLen: getFormulaOrVal('.row-cutlen')
+      }, true);
+      triggerAutoCalc();
+    }
+
+    function resetTable() {
+      if (confirm('คุณต้องการล้างข้อมูลเพื่อเริ่มงานใหม่ใช่หรือไม่?')) {
+        document.getElementById('barcutTbody').innerHTML = '';
+        rowCount = 0;
+        addNewRow(null, true);
+        calculateCutting(true);
+      }
+    }
+
+    function clearCalculations() {
+      document.querySelectorAll('.row-bars-new, .row-bars-reuse, .row-offcut, .row-scrapg').forEach(td => td.innerText = '-');
+      document.getElementById('boqTbody').innerHTML = '<tr><td colspan="8" class="text-center p-6 text-slate-500 font-bold">กดคำนวณเพื่อแสดงข้อมูล BOQ</td></tr>';
+      document.getElementById('boqTfoot').innerHTML = '';
+      document.getElementById('cuttingDiagramContainer').innerHTML = '<p class="text-center p-6 text-slate-500 font-bold">กดคำนวณเพื่อแสดงแผนผังการตัด</p>';
+    }
+
+    function calculateCutting(isSilent = false) {
+      const kerfM = (parseFloat(document.getElementById('kerfInput').value) || 0) / 1000;
+      const minScrapM = (parseFloat(document.getElementById('minScrapInput').value) || 500) / 1000;
+      const rows = document.querySelectorAll('#barcutTbody tr');
+
+      rows.forEach(r => {
+        r.querySelector('.row-bars-new').innerText = '-';
+        r.querySelector('.row-bars-reuse').innerText = '-';
+        r.querySelector('.row-offcut').innerText = '-';
+        r.querySelector('.row-scrapg').innerText = '-';
+      });
+
+      let groups = {};
+
+      rows.forEach((r, idx) => {
+        const id = r.id;
+        const rowNo = idx + 1;
+        const comp = r.querySelector('.row-comp').value.trim() || `ชิ้นงาน ${rowNo}`;
+        const profile = r.querySelector('.row-profile').value.trim();
+        const normKey = profile.replace(/\s+/g, '').toLowerCase();
+
+        const wtEl = r.querySelector('.row-weight');
+        const pfEl = r.querySelector('.row-paint-factor');
+        const clEl = r.querySelector('.row-cutlen');
+
+        const weight = parseFloat(evaluateFormula(wtEl.dataset.formula || wtEl.value)) || 0;
+        const paintFactor = parseFloat(evaluateFormula(pfEl.dataset.formula || pfEl.value)) || 0;
+        const set = parseFloat(r.querySelector('.row-set').value) || 0;
+        const qty = parseFloat(r.querySelector('.row-qty').value) || 0;
+        const total = set * qty;
+        const cutLen = parseFloat(evaluateFormula(clEl.dataset.formula || clEl.value)) || 0;
+        const stockLen = parseFloat(r.querySelector('.row-stock').value) || 6.00;
+
+        if (!normKey || cutLen <= 0 || total <= 0) return;
+
+        if (!groups[normKey]) {
+          groups[normKey] = {
+            displayName: profile,
+            weight: weight,
+            paintFactor: paintFactor,
+            stockLen: stockLen,
+            items: []
+          };
+        }
+
+        groups[normKey].items.push({
+          rowId: id, rowNo: rowNo, comp, total, cutLen
+        });
+      });
+
+      if (Object.keys(groups).length === 0) {
+        document.getElementById('boqTbody').innerHTML = '<tr><td colspan="8" class="text-center p-6 text-slate-500 font-bold">กรอกรายการเหล็กเพื่อดูรายงาน</td></tr>';
+        document.getElementById('boqTfoot').innerHTML = '';
+        document.getElementById('cuttingDiagramContainer').innerHTML = '<p class="text-center p-6 text-slate-500 font-bold">ยังไม่มีข้อมูล</p>';
+        return;
+      }
+
+      let boqSummary = {};
+      let diagramHtml = '';
+      let sumAllPaint = 0;
+      let sumAllPurchasedKg = 0;
+
+      for (const [normKey, group] of Object.entries(groups)) {
+        let cuts = [];
+        let fullBarsByRow = {};
+        let spliceDetailByRow = {};
+        const stdLen = group.stockLen;
+
+        group.items.forEach(it => {
+          const cutLen = it.cutLen;
+          const total = it.total;
+
+          if (cutLen > stdLen) {
+            const fullPerPiece = Math.floor(cutLen / stdLen);
+            const remPerPiece = Math.round((cutLen - (fullPerPiece * stdLen)) * 1000) / 1000;
+            const totalFullBars = fullPerPiece * total;
+
+            fullBarsByRow[it.rowId] = totalFullBars;
+            spliceDetailByRow[it.rowId] = `ต่อเหล็ก: เต็ม ${stdLen}ม. x ${fullPerPiece}` + (remPerPiece > 0 ? ` + ตัดต่อ ${remPerPiece.toFixed(2)}ม.` : '');
+
+            if (remPerPiece > 0) {
+              for (let i = 0; i < total; i++) {
+                cuts.push({
+                  rowId: it.rowId,
+                  rowNo: it.rowNo,
+                  comp: `${it.comp} (ท่อนต่อ)`,
+                  length: remPerPiece,
+                  isSpliceRem: true
+                });
+              }
+            }
+          } else {
+            for (let i = 0; i < total; i++) {
+              cuts.push({
+                rowId: it.rowId,
+                rowNo: it.rowNo,
+                comp: it.comp,
+                length: cutLen,
+                isSpliceRem: false
+              });
+            }
+          }
+        });
+
+        cuts.sort((a, b) => b.length - a.length);
+
+        let bars = [];
+
+        group.items.forEach(it => {
+          if (fullBarsByRow[it.rowId] > 0) {
+            const count = fullBarsByRow[it.rowId];
+            for (let k = 0; k < count; k++) {
+              bars.push({
+                isDedicatedFull: true,
+                rowId: it.rowId,
+                rowNo: it.rowNo,
+                originalLen: stdLen,
+                remaining: 0,
+                cuts: [{
+                  rowId: it.rowId,
+                  rowNo: it.rowNo,
+                  comp: `${it.comp} (เต็มท่อน)`,
+                  length: stdLen
+                }]
+              });
+            }
+          }
+        });
+
+        cuts.forEach(c => {
+          let bestBar = null;
+          let minRem = Infinity;
+
+          for (let b of bars) {
+            if (b.isDedicatedFull) continue;
+            let currNominal = b.cuts.reduce((s, x) => s + x.length, 0);
+
+            if (currNominal + c.length <= stdLen + 0.0001) {
+              let rem = stdLen - (currNominal + c.length);
+              if (rem < minRem) {
+                minRem = rem;
+                bestBar = b;
+              }
+            }
+          }
+
+          if (!bestBar) {
+            bestBar = {
+              originalLen: stdLen,
+              cuts: []
+            };
+            bars.push(bestBar);
+          }
+
+          bestBar.cuts.push(c);
+        });
+
+        bars.forEach((b, idx) => {
+          b.barIndex = idx + 1;
+          let nominalSum = b.cuts.reduce((s, x) => s + x.length, 0);
+          let kerfSum = Math.max(0, b.cuts.length - 1) * kerfM;
+
+          if (Math.abs(nominalSum - stdLen) < 0.001) {
+            b.remaining = 0;
+          } else {
+            b.remaining = Math.max(0, Math.round((stdLen - nominalSum - kerfSum) * 1000) / 1000);
+          }
+        });
+
+        bars.forEach(b => {
+          let groupsInBar = [];
+          b.cuts.forEach(c => {
+            if (!groupsInBar.length || groupsInBar[groupsInBar.length - 1].rowNo !== c.rowNo) {
+              groupsInBar.push({ rowId: c.rowId, rowNo: c.rowNo, len: c.length, cuts: [c] });
+            } else {
+              groupsInBar[groupsInBar.length - 1].cuts.push(c);
+            }
+          });
+
+          groupsInBar.forEach((g, idx) => {
+            const qty = g.cuts.length;
+
+            if (idx === 0) {
+              g.sourceType = 'new';
+              g.newBarsCount = 1;
+            } else {
+              const prevGroup = groupsInBar[idx - 1];
+              g.sourceType = 'reuse';
+              g.sourceFrom = prevGroup.rowNo;
+              g.sourceQty = qty;
+              g.sourceLen = g.len;
+            }
+
+            if (idx + 1 < groupsInBar.length) {
+              const nextGroup = groupsInBar[idx + 1];
+              g.hasPass = true;
+              g.passTo = nextGroup.rowNo;
+              g.passLen = nextGroup.len;
+              g.passQty = nextGroup.cuts.length;
+            } else {
+              g.isLastInBar = true;
+              g.finalRemainder = Math.max(0, b.remaining);
+            }
+          });
+
+          b.rowGroups = groupsInBar;
+        });
+
+        group.items.forEach(it => {
+          const tr = document.getElementById(it.rowId);
+          if (!tr) return;
+
+          let newBarsTotal = fullBarsByRow[it.rowId] || 0;
+          let reuseMap = {};
+          let passMap = {};
+          let remList = [];
+          let rowScrapWeight = 0;
+
+          bars.forEach(b => {
+            if (b.isDedicatedFull) return;
+            (b.rowGroups || []).forEach(g => {
+              if (g.rowId === it.rowId) {
+                if (g.sourceType === 'new') {
+                  newBarsTotal += g.newBarsCount;
+                } else if (g.sourceType === 'reuse') {
+                  const key = `${g.sourceLen.toFixed(2)}|${g.sourceFrom}`;
+                  reuseMap[key] = (reuseMap[key] || 0) + g.sourceQty;
+                }
+
+                if (g.hasPass) {
+                  const passKey = `${g.passLen.toFixed(2)}|${g.passTo}`;
+                  passMap[passKey] = (passMap[passKey] || 0) + g.passQty;
+                }
+                if (g.isLastInBar) {
+                  remList.push(g.finalRemainder);
+                  rowScrapWeight += g.finalRemainder * group.weight;
+                }
+              }
+            });
+          });
+
+          // ปรับปรุงขนาดและดีไซน์ช่องท่อนหลักเบิกใหม่ ให้ดูสบายตา ขนาดกะทัดรัด
+          if (newBarsTotal > 0) {
+            let spliceBadge = spliceDetailByRow[it.rowId] ? `<span class="splice-note text-[9.5px] text-slate-500 font-normal block mt-0.5 leading-tight">(${spliceDetailByRow[it.rowId]})</span>` : '';
+            tr.querySelector('.row-bars-new').innerHTML = `<span class="bars-main-badge bg-cyan-100 text-cyan-900 px-2 py-0.5 rounded font-bold border border-cyan-300 inline-block whitespace-nowrap text-xs shadow-2xs">${newBarsTotal} เส้น</span>${spliceBadge}`;
+          } else {
+            tr.querySelector('.row-bars-new').innerText = '-';
+          }
+
+          let reuseParts = [];
+          for (const [key, qty] of Object.entries(reuseMap)) {
+            const [len, fromNo] = key.split('|');
+            reuseParts.push(`นำเศษ ${len} m ${qty} ท่อน จาก No.${fromNo}`);
+          }
+          tr.querySelector('.row-bars-reuse').innerHTML = reuseParts.length > 0 ? reuseParts.join('<br>') : '-';
+
+          let finalOffcuts = [];
+          for (const [key, qty] of Object.entries(passMap)) {
+            const [len, nextNo] = key.split('|');
+            finalOffcuts.push(`ส่งต่อเศษ ${len} m ${qty} ท่อน (นำไปใช้ใน No.${nextNo})`);
+          }
+
+          let remCounts = {};
+          remList.forEach(rem => {
+            if (rem >= minScrapM) {
+              const k = `เศษ ${rem.toFixed(2)} m|เก็บสต็อก`;
+              remCounts[k] = (remCounts[k] || 0) + 1;
+            } else if (rem > 0.05) {
+              const k = `เศษ ${rem.toFixed(2)} m|เศษทิ้ง`;
+              remCounts[k] = (remCounts[k] || 0) + 1;
+            } else {
+              const k = `ตัดหมดพอดี|`;
+              remCounts[k] = (remCounts[k] || 0) + 1;
+            }
+          });
+
+          for (const [k, cnt] of Object.entries(remCounts)) {
+            const [label, status] = k.split('|');
+            if (status) {
+              finalOffcuts.push(cnt > 1 ? `${label} ${cnt} ท่อน (${status})` : `${label} 1 ท่อน (${status})`);
+            } else {
+              finalOffcuts.push(cnt > 1 ? `${label} (${cnt} ท่อน)` : label);
+            }
+          }
+
+          tr.querySelector('.row-offcut').innerHTML = finalOffcuts.join('<br>') || '-';
+          tr.querySelector('.row-scrapg').innerText = rowScrapWeight > 0 ? rowScrapWeight.toFixed(2) : '-';
+        });
+
+        let totalUsedLen = group.items.reduce((s, it) => s + (it.cutLen * it.total), 0);
+        let totalPurchasedLen = bars.length * stdLen;
+        let totalPurchasedKg = totalPurchasedLen * group.weight;
+        let totalPaintArea = totalUsedLen * group.paintFactor;
+        let totalScrapLen = bars.reduce((s, b) => s + Math.max(0, b.remaining), 0);
+        let yieldPct = totalPurchasedLen > 0 ? (totalUsedLen / totalPurchasedLen * 100).toFixed(1) : 0;
+
+        sumAllPaint += totalPaintArea;
+        sumAllPurchasedKg += totalPurchasedKg;
+
+        boqSummary[group.displayName] = {
+          weight: group.weight,
+          usedLen: totalUsedLen.toFixed(2),
+          paintArea: totalPaintArea.toFixed(2),
+          barsCount: bars.length,
+          stockLen: stdLen,
+          scrapLen: totalScrapLen.toFixed(2),
+          purchasedKg: totalPurchasedKg.toFixed(1),
+          yieldPct: yieldPct
+        };
+
+        // สรุปรวบผังการตัด: จัดกลุ่มท่อนเหล็กที่มี Pattern เหมือนกัน
+        let groupedBars = [];
+        bars.forEach(b => {
+          let cutsSig = b.cuts.map(c => `${c.rowNo}_${c.length.toFixed(3)}`).join('|');
+          let remSig = b.remaining.toFixed(3);
+          let isFullSig = b.isDedicatedFull ? '1' : '0';
+          let patternKey = `${isFullSig}__${cutsSig}__${remSig}`;
+
+          let lastGroup = groupedBars[groupedBars.length - 1];
+          if (lastGroup && lastGroup.patternKey === patternKey) {
+            lastGroup.count++;
+            lastGroup.endIndex = b.barIndex;
+          } else {
+            groupedBars.push({
+              patternKey: patternKey,
+              count: 1,
+              startIndex: b.barIndex,
+              endIndex: b.barIndex,
+              sampleBar: b
+            });
+          }
+        });
+
+        diagramHtml += `
+          <div class="border-2 border-slate-300 rounded-lg p-3 bg-slate-50 space-y-2 w-full">
+            <div class="flex justify-between items-center font-black text-slate-900 text-sm border-b-2 border-slate-200 pb-1.5">
+              <span>🔩 หน้าตัด: ${group.displayName} (เบิกเหล็กใหม่รวม ${bars.length} เส้น)</span>
+              <span class="text-cyan-800">พ.ท. ทาสี: ${totalPaintArea.toFixed(2)} ตร.ม. | Yield: ${yieldPct}%</span>
+            </div>
+            <div class="space-y-1.5 pt-1 w-full">
+        `;
+
+        groupedBars.forEach(g => {
+          const b = g.sampleBar;
+          let cutsVisual = '';
+
+          b.cuts.forEach(c => {
+            let pct = (c.length / b.originalLen * 100).toFixed(2);
+            let isFull = b.isDedicatedFull;
+            let lenDisp = parseFloat(c.length.toFixed(2));
+            let cutLabel = `No.${c.rowNo} (${lenDisp}ม.)`;
+            let subLabel = g.count > 1 ? `(${g.count} ท่อน)` : '';
+
+            // แสดงข้อความแบบ 2 บรรทัด ไม่ดันให้ล้นขอบขวา
+            cutsVisual += `
+              <div style="width: ${pct}%" class="${isFull ? 'bg-indigo-700' : 'bg-cyan-700'} text-white font-bold text-[10px] flex flex-col items-center justify-center border-r border-white/50 px-0.5 leading-tight overflow-hidden" title="No.${c.rowNo} ${c.comp}: ${c.length} ม. ${g.count > 1 ? `(รวม ${g.count} ท่อน)` : ''}">
+                <span class="truncate max-w-full">${cutLabel}</span>
+                ${subLabel ? `<span class="text-[9px] font-semibold text-cyan-200 truncate max-w-full leading-none">${subLabel}</span>` : ''}
+              </div>
+            `;
+          });
+
+          let rem = Math.max(0, b.remaining);
+          let remPct = (rem / b.originalLen * 100).toFixed(2);
+          let isKeep = rem >= minScrapM;
+          let remText = rem.toFixed(2);
+          let remSubLabel = g.count > 1 ? `(${g.count} ท่อน)` : '';
+
+          let remMainLabel = '';
+          if (b.isDedicatedFull) {
+            remMainLabel = '';
+          } else if (isKeep) {
+            remMainLabel = remPct < 10 ? `+${remText}ม.` : `สต็อก +${remText}ม.`;
+          } else if (rem > 0.05) {
+            remMainLabel = `เศษ ${remText}ม.`;
+          } else {
+            remMainLabel = `พอดี`;
+          }
+
+          if (remMainLabel) {
+            cutsVisual += `
+              <div style="width: ${remPct}%" class="${isKeep ? 'bg-purple-200 text-purple-950 font-black' : 'bg-slate-300 text-slate-800 font-bold'} text-[10px] flex flex-col items-center justify-center px-0.5 leading-tight overflow-hidden border-l border-slate-400" title="${isKeep ? `เศษเข้าสต็อก +${remText} ม.` : `เศษทิ้ง ${remText} ม.`} ${g.count > 1 ? `(รวม ${g.count} ท่อน)` : ''}">
+                <span class="truncate max-w-full">${remMainLabel}</span>
+                ${remSubLabel ? `<span class="text-[9px] font-semibold text-slate-700 truncate max-w-full leading-none">${remSubLabel}</span>` : ''}
+              </div>
+            `;
+          }
+
+          // ป้ายช่วงหมายเลขเส้นด้านซ้ายแบบ 2 คอลัมน์ ไม่หักคำลงบรรทัด
+          let barIndexLabel = g.count > 1 
+            ? `<span>เส้น #${g.startIndex} - #${g.endIndex}</span> <span class="bg-cyan-100 text-cyan-950 px-1.5 py-0.5 rounded text-[10px] font-black border border-cyan-400 whitespace-nowrap">(${g.count} เส้น)</span>`
+            : `<span>เส้น #${g.startIndex}</span>`;
+
+          diagramHtml += `
+            <div class="cutting-bar-row flex items-center gap-2 w-full">
+              <div class="w-48 shrink-0 flex items-center justify-between font-mono text-xs text-slate-800 font-black pr-1">
+                ${barIndexLabel}
+              </div>
+              <div class="flex-1 min-w-0 bg-slate-200 rounded-md flex overflow-hidden border border-slate-400 shadow-inner h-9 bar-visual-container">
+                ${cutsVisual}
+              </div>
+            </div>
+          `;
+        });
+
+        diagramHtml += `</div></div>`;
+      }
+
+      let boqRows = '';
+      for (const [pName, b] of Object.entries(boqSummary)) {
+        boqRows += `
+          <tr class="border-b border-slate-300 hover:bg-slate-50 font-bold">
+            <td class="p-2.5 font-black text-slate-900 border border-slate-300">${pName}</td>
+            <td class="p-2.5 text-right border border-slate-300 font-mono">${b.weight > 0 ? b.weight.toFixed(2) : '-'}</td>
+            <td class="p-2.5 text-right border border-slate-300 font-mono">${b.usedLen} ม.</td>
+            <td class="p-2.5 text-right border border-slate-300 font-mono font-black bg-amber-50 text-amber-950">${b.paintArea} ตร.ม.</td>
+            <td class="p-2.5 text-center border border-slate-300 font-mono font-black text-cyan-800">${b.barsCount} เส้น (${b.stockLen}ม.)</td>
+            <td class="p-2.5 text-right border border-slate-300 font-mono text-purple-900 font-black">${b.scrapLen} ม.</td>
+            <td class="p-2.5 text-right border border-slate-300 font-mono font-black text-emerald-900">${b.purchasedKg} กก.</td>
+            <td class="p-2.5 text-right border border-slate-300 font-mono font-black ${b.yieldPct >= 85 ? 'text-emerald-700' : 'text-amber-700'}">${b.yieldPct}%</td>
+          </tr>
+        `;
+      }
+
+      document.getElementById('boqTbody').innerHTML = boqRows;
+      document.getElementById('boqTfoot').innerHTML = `
+        <tr class="border-t-2 border-slate-400">
+          <td colspan="3" class="p-2.5 text-right text-slate-800 font-black text-sm">รวมทั้งโครงการ:</td>
+          <td class="p-2.5 text-right font-mono text-amber-950 text-base font-black bg-amber-100">${sumAllPaint.toFixed(2)} ตร.ม.</td>
+          <td colspan="2"></td>
+          <td class="p-2.5 text-right font-mono text-emerald-950 text-base font-black bg-emerald-100">${sumAllPurchasedKg.toFixed(1)} กก.</td>
+          <td></td>
+        </tr>
+      `;
+
+      document.getElementById('cuttingDiagramContainer').innerHTML = diagramHtml;
+
+      if (!isSilent) {
+        alert('คำนวณและจัดสรรเศษเหล็กเรียบร้อยแล้ว!');
+      }
+    }
+
+    // =========================================================================
+    // คลังโครงการส่วนตัว
+    // =========================================================================
+    function getLibraryData() {
+      return JSON.parse(localStorage.getItem('cutsteel_library_v2') || '{}');
+    }
+
+    function saveLibraryData(data) {
+      localStorage.setItem('cutsteel_library_v2', JSON.stringify(data));
+    }
+
+    function saveProjectToStorage() {
+      const projName = document.getElementById('projName').value.trim() || 'โครงการไม่มีชื่อ';
+      const jobCategory = document.getElementById('jobCategory').value.trim() || 'หมวดงานทั่วไป';
+
+      const rows = [];
+      document.querySelectorAll('#barcutTbody tr').forEach(r => {
+        const wtEl = r.querySelector('.row-weight');
+        const pfEl = r.querySelector('.row-paint-factor');
+        const clEl = r.querySelector('.row-cutlen');
+
+        rows.push({
+          comp: r.querySelector('.row-comp').value,
+          profile: r.querySelector('.row-profile').value,
+          weight: wtEl.dataset.formula || wtEl.value,
+          paintFactor: pfEl.dataset.formula || pfEl.value,
+          stock: r.querySelector('.row-stock').value,
+          set: r.querySelector('.row-set').value,
+          qty: r.querySelector('.row-qty').value,
+          cutLen: clEl.dataset.formula || clEl.value
+        });
+      });
+
+      let lib = getLibraryData();
+      if (!lib[projName]) lib[projName] = {};
+      lib[projName][jobCategory] = rows;
+      saveLibraryData(lib);
+
+      alert(`บันทึกหมวดงาน "${jobCategory}" ในโครงการ "${projName}" เรียบร้อยแล้ว!`);
+    }
+
+    function openProjectLibrary() {
+      renderLibraryUI();
+      document.getElementById('libraryModal').classList.remove('hidden');
+    }
+
+    function closeProjectLibrary() {
+      document.getElementById('libraryModal').classList.add('hidden');
+    }
+
+    function renderLibraryUI() {
+      const lib = getLibraryData();
+      const container = document.getElementById('libraryList');
+      const projNames = Object.keys(lib);
+
+      if (projNames.length === 0) {
+        container.innerHTML = '<div class="text-center py-12 text-slate-400 font-bold border-2 border-dashed border-slate-200 rounded-xl">ยังไม่มีโครงการในคลัง กด "บันทึกงานลงคลัง" เพื่อบันทึกงานปัจจุบัน</div>';
+        return;
+      }
+
+      let html = '';
+      projNames.forEach(pName => {
+        const jobs = lib[pName];
+        const jobNames = Object.keys(jobs);
+
+        let subJobsHtml = '';
+        let totalAllPieces = 0;
+
+        jobNames.forEach(jName => {
+          const rowsCount = jobs[jName].length;
+          totalAllPieces += rowsCount;
+          subJobsHtml += `
+            <div class="flex items-center justify-between p-2.5 bg-white border border-slate-200 rounded-lg hover:border-blue-400 transition shadow-xs">
+              <div class="flex items-center gap-2 overflow-hidden">
+                <span class="text-rose-500 font-bold">📌</span>
+                <span class="text-blue-600 font-bold text-sm truncate">${jName}</span>
+                <button onclick="renameJobCategory('${pName}', '${jName}')" class="text-slate-400 hover:text-amber-500 text-xs" title="เปลี่ยนชื่อหมวด">✏️</button>
+                <span class="text-slate-400 text-xs font-semibold">(${rowsCount} รายการ)</span>
+              </div>
+              <div class="flex items-center gap-1.5 shrink-0">
+                <button onclick="loadSpecificJob('${pName}', '${jName}')" class="bg-[#4f46e5] hover:bg-indigo-700 text-white px-3 py-1 rounded-md text-xs font-bold flex items-center gap-1 shadow-xs transition">
+                  <span>📁</span> เปิด
+                </button>
+                <button onclick="deleteSpecificJob('${pName}', '${jName}')" class="bg-rose-600 hover:bg-rose-700 text-white px-2.5 py-1 rounded-md text-xs font-bold transition">
+                  ✕
+                </button>
+              </div>
+            </div>
+          `;
+        });
+
+        let combinedRowHtml = '';
+        if (jobNames.length >= 2) {
+          const combinedTitle = jobNames.join(' + ');
+          combinedRowHtml = `
+            <div class="flex items-center justify-between p-2.5 bg-blue-50/50 border border-blue-200 rounded-lg shadow-xs mt-1">
+              <div class="flex items-center gap-2 overflow-hidden">
+                <span class="text-rose-500 font-bold">📌</span>
+                <span class="text-blue-800 font-black text-sm truncate">งานรวม: ${combinedTitle}</span>
+                <span class="text-slate-500 text-xs font-bold">(${totalAllPieces} รายการ)</span>
+              </div>
+              <div class="flex items-center gap-1.5 shrink-0">
+                <button onclick="loadCombinedProject('${pName}')" class="bg-[#4f46e5] hover:bg-indigo-700 text-white px-3 py-1 rounded-md text-xs font-black flex items-center gap-1 shadow-xs transition">
+                  <span>📁</span> เปิด
+                </button>
+                <button onclick="deleteProject('${pName}')" class="bg-rose-600 hover:bg-rose-700 text-white px-2.5 py-1 rounded-md text-xs font-bold transition">
+                  ✕
+                </button>
+              </div>
+            </div>
+          `;
+        }
+
+        html += `
+          <div class="border-2 border-slate-200 rounded-xl p-4 bg-slate-50/70 space-y-3 shadow-xs">
+            <div class="flex justify-between items-center border-b border-slate-200 pb-2">
+              <div class="flex items-center gap-2">
+                <span class="text-lg">🏢</span>
+                <span class="font-black text-slate-800 text-base">${pName}</span>
+                <button onclick="renameProject('${pName}')" class="text-slate-400 hover:text-amber-500 text-xs ml-1" title="เปลี่ยนชื่อโครงการ">✏️</button>
+              </div>
+              <button onclick="deleteProject('${pName}')" class="text-rose-600 hover:text-rose-700 font-bold text-xs flex items-center gap-1 transition">
+                <span>🗑️</span> ลบโครงการ
+              </button>
+            </div>
+            <div class="space-y-1.5">
+              ${subJobsHtml}
+              ${combinedRowHtml}
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    function loadSpecificJob(pName, jName) {
+      const lib = getLibraryData();
+      if (lib[pName] && lib[pName][jName]) {
+        document.getElementById('projName').value = pName;
+        document.getElementById('jobCategory').value = jName;
+        document.getElementById('barcutTbody').innerHTML = '';
+        rowCount = 0;
+        lib[pName][jName].forEach(r => addNewRow(r));
+        closeProjectLibrary();
+        calculateCutting(true);
+        syncPrintInfo();
+      }
+    }
+
+    function loadCombinedProject(pName) {
+      const lib = getLibraryData();
+      if (lib[pName]) {
+        const jobNames = Object.keys(lib[pName]);
+        document.getElementById('projName').value = pName;
+        document.getElementById('jobCategory').value = `งานรวม: ${jobNames.join(' + ')}`;
+        document.getElementById('barcutTbody').innerHTML = '';
+        rowCount = 0;
+        jobNames.forEach(jName => {
+          lib[pName][jName].forEach(r => addNewRow(r));
+        });
+        closeProjectLibrary();
+        calculateCutting(true);
+        syncPrintInfo();
+      }
+    }
+
+    function combineCurrentProjectJobs() {
+      const pName = document.getElementById('projName').value.trim();
+      const lib = getLibraryData();
+      if (!pName || !lib[pName]) {
+        alert('กรุณาเลือกหรือบันทึกโครงการที่มีในคลังก่อน จึงจะสามารถรวมงานได้');
+        return;
+      }
+      loadCombinedProject(pName);
+    }
+
+    function renameProject(oldName) {
+      const newName = prompt('ระบุชื่อโครงการใหม่:', oldName);
+      if (newName && newName.trim() && newName.trim() !== oldName) {
+        let lib = getLibraryData();
+        lib[newName.trim()] = lib[oldName];
+        delete lib[oldName];
+        saveLibraryData(lib);
+        renderLibraryUI();
+      }
+    }
+
+    function renameJobCategory(pName, oldJobName) {
+      const newJobName = prompt('ระบุชื่อหมวดหมู่งานใหม่:', oldJobName);
+      if (newJobName && newJobName.trim() && newJobName.trim() !== oldJobName) {
+        let lib = getLibraryData();
+        lib[pName][newJobName.trim()] = lib[pName][oldJobName];
+        delete lib[pName][oldJobName];
+        saveLibraryData(lib);
+        renderLibraryUI();
+      }
+    }
+
+    function deleteSpecificJob(pName, jName) {
+      if (confirm(`ต้องการลบหมวดงาน "${jName}" ใช่หรือไม่?`)) {
+        let lib = getLibraryData();
+        delete lib[pName][jName];
+        if (Object.keys(lib[pName]).length === 0) {
+          delete lib[pName];
+        }
+        saveLibraryData(lib);
+        renderLibraryUI();
+      }
+    }
+
+    function deleteProject(pName) {
+      if (confirm(`ต้องการลบโครงการ "${pName}" และทุกหมวดงานย่อยใช่หรือไม่?`)) {
+        let lib = getLibraryData();
+        delete lib[pName];
+        saveLibraryData(lib);
+        renderLibraryUI();
+      }
+    }
+
+    function libraryAddNewJob() {
+      const pName = prompt('ระบุชื่อโครงการสำหรับงานใหม่:', document.getElementById('projName').value || 'โครงการใหม่');
+      if (!pName) return;
+      const jName = prompt('ระบุชื่อหมวดหมู่งานใหม่:', 'หมวดงานใหม่');
+      if (!jName) return;
+
+      document.getElementById('projName').value = pName.trim();
+      document.getElementById('jobCategory').value = jName.trim();
+      document.getElementById('barcutTbody').innerHTML = '';
+      rowCount = 0;
+      addNewRow(null, true);
+      calculateCutting(true);
+      closeProjectLibrary();
+      syncPrintInfo();
+    }
+
+    function exportJSONLibrary() {
+      const lib = getLibraryData();
+      const blob = new Blob([JSON.stringify(lib, null, 2)], { type: 'application/json' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `cutsteel_library_backup_${new Date().toISOString().slice(0, 10)}.json`;
+      link.click();
+    }
+
+    function triggerImportJSON() {
+      document.getElementById('jsonLibraryInput').click();
+    }
+
+    function handleImportJSON(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        try {
+          const imported = JSON.parse(evt.target.result);
+          if (typeof imported === 'object' && imported !== null) {
+            let lib = getLibraryData();
+            Object.keys(imported).forEach(p => {
+              if (!lib[p]) lib[p] = {};
+              Object.keys(imported[p]).forEach(j => {
+                lib[p][j] = imported[p][j];
+              });
+            });
+            saveLibraryData(lib);
+            renderLibraryUI();
+            alert('นำเข้าคลังโครงการเรียบร้อยแล้ว!');
+          } else {
+            alert('โครงสร้างไฟล์ไม่ถูกต้อง');
+          }
+        } catch(err) {
+          alert('ไม่สามารถอ่านไฟล์ JSON ได้ กรุณาตรวจสอบไฟล์');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    // =========================================================================
+    // ส่งออกไฟล์ CSV / Excel
+    // =========================================================================
+    function exportToCSV() {
+      calculateCutting(true);
+
+      const projName = document.getElementById('projName').value.trim() || 'ไม่ได้ระบุชื่อโครงการ';
+      const jobCategory = document.getElementById('jobCategory').value.trim() || 'ไม่ได้ระบุหมวดหมู่งาน';
+
+      let csv = "\uFEFF";
+      csv += `โครงการ:,"${projName}",หมวดหมู่งาน:,"${jobCategory}",วันที่ออกรายงาน:,"${new Date().toLocaleDateString('th-TH')}"\n\n`;
+
+      csv += `[ตารางที่ 1: ตาราง Barcut คำนวณตัดเหล็กรูปพรรณ]\n`;
+      csv += "ลำดับ,ชื่อชิ้นงาน (COMPONENT),หน้าตัดเหล็ก (TYPE),นน.ต่อเมตร (กก./ม.),พท.ผิวรอบรูป (ตร.ม./ม.),ความยาวสต็อก,ชุด,ต่อชุด,รวมชิ้น,ยาวตัดต่อชิ้น (ม.),พท.ทาสีรวม (ตร.ม.),ท่อนหลักเบิกใหม่ (เส้น),ดึงเศษจาก No.,รายละเอียดเศษเหลือ (OFFCUT),นน.เศษ (กก.)\n";
+      
+      const rows = document.querySelectorAll('#barcutTbody tr');
+      rows.forEach((r, i) => {
+        const comp = `"${(r.querySelector('.row-comp')?.value || '').replace(/"/g, '""')}"`;
+        const prof = `"${(r.querySelector('.row-profile')?.value || '').replace(/"/g, '""')}"`;
+        
+        const wtEl = r.querySelector('.row-weight');
+        const pfEl = r.querySelector('.row-paint-factor');
+        const clEl = r.querySelector('.row-cutlen');
+
+        const wt = wtEl?.value || '';
+        const pf = pfEl?.value || '';
+        const st = r.querySelector('.row-stock')?.value || '';
+        const set = r.querySelector('.row-set')?.value || '';
+        const qty = r.querySelector('.row-qty')?.value || '';
+        const tot = r.querySelector('.row-total')?.innerText || '';
+        const cut = clEl?.value || '';
+        const ptot = r.querySelector('.row-paint-total')?.innerText || '';
+        
+        const bNew = `"${(r.querySelector('.row-bars-new')?.innerText || '').replace(/"/g, '""')}"`;
+        const bReuse = `"${(r.querySelector('.row-bars-reuse')?.innerText || '').replace(/"/g, '""').replace(/\n/g, ' ')}"`;
+        const off = `"${(r.querySelector('.row-offcut')?.innerText || '').replace(/"/g, '""').replace(/\n/g, ' | ')}"`;
+        const swt = r.querySelector('.row-scrapg')?.innerText || '';
+
+        csv += `${i+1},${comp},${prof},${wt},${pf},${st},${set},${qty},${tot},${cut},${ptot},${bNew},${bReuse},${off},${swt}\n`;
+      });
+
+      csv += `\n\n[ตารางที่ 2: สรุปรายการสั่งซื้อเหล็ก และพื้นที่ทาสีโครงการ (BOQ Summary)]\n`;
+      csv += "หน้าตัดเหล็กรูปพรรณ (TYPE),น.น. (กก./ม.),ความยาวใช้จริง (ม.),พื้นที่ทาสีรวม (ตร.ม.),เบิกเหล็กใหม่ (เส้น),เศษเข้าสต็อก (ม.),น.น. สั่งซื้อรวม (กก.),Yield ใช้วัสดุ (%)\n";
+
+      const boqRows = document.querySelectorAll('#boqTbody tr');
+      boqRows.forEach(r => {
+        const tds = r.querySelectorAll('td');
+        if (tds.length >= 8) {
+          const c0 = `"${tds[0].innerText.replace(/"/g, '""')}"`;
+          const c1 = tds[1].innerText;
+          const c2 = tds[2].innerText.replace(' ม.', '');
+          const c3 = tds[3].innerText.replace(' ตร.ม.', '');
+          const c4 = `"${tds[4].innerText.replace(/"/g, '""')}"`;
+          const c5 = tds[5].innerText.replace(' ม.', '');
+          const c6 = tds[6].innerText.replace(' กก.', '');
+          const c7 = tds[7].innerText;
+          csv += `${c0},${c1},${c2},${c3},${c4},${c5},${c6},${c7}\n`;
+        }
+      });
+
+      const tfootTds = document.querySelectorAll('#boqTfoot tr td');
+      if (tfootTds.length >= 4) {
+        const lbl = `"${tfootTds[0].innerText.replace(/"/g, '""')}"`;
+        const totalPaint = tfootTds[1].innerText.replace(' ตร.ม.', '');
+        const totalKg = tfootTds[3].innerText.replace(' กก.', '');
+        csv += `${lbl},,,"${totalPaint}",,,"${totalKg}",\n`;
+      }
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `ตารางสั่งตัดและสรุปBOQ_${projName}.csv`;
+      link.click();
+    }
+
+    function triggerImportExcel() {
+      document.getElementById('excelFileInput').click();
+    }
+
+    function handleFileImport(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const stripCsvQuote = (str) => {
+        if (!str) return '';
+        let s = str.trim();
+        if (s.startsWith('"') && s.endsWith('"')) {
+          s = s.substring(1, s.length - 1).replace(/""/g, '"');
+        }
+        return s;
+      };
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const text = evt.target.result;
+        const lines = text.split(/\r\n|\n/);
+        if (lines.length > 1) {
+          document.getElementById('barcutTbody').innerHTML = '';
+          rowCount = 0;
+          for (let i = 1; i < lines.length; i++) {
+            const cols = lines[i].split(',');
+            if (cols.length >= 8) {
+              addNewRow({
+                comp: stripCsvQuote(cols[1]),
+                profile: stripCsvQuote(cols[2]),
+                weight: cols[3] || '',
+                paintFactor: cols[4] || '',
+                stock: cols[5] || '6.0',
+                set: cols[6] || '1',
+                qty: cols[7] || '1',
+                cutLen: cols[9] || cols[8] || ''
+              });
+            }
+          }
+          calculateCutting(true);
+          syncPrintInfo();
+          alert('นำเข้าข้อมูลสำเร็จ!');
+        }
+      };
+      reader.readAsText(file);
+    }
+  ได้ปรับปรุงแก้ไขโค้ดโปรแกรมให้ครบทั้ง 2 ข้อเรียบร้อยแล้ว:
+
+---
+
+### รายละเอียดการปรับปรุงทั้ง 2 ข้อ
+
+1. **ปรับลดขนาดตัวหนังสือช่อง "ท่อนหลัก (BARS) เบิกเส้นใหม่" ให้พอดี สบายตา:**
+   * ปรับขนาดตัวเลขและคำว่า `45 เส้น` จากเดิมที่ใหญ่และหนาเกินไป ให้เป็นขนาดกะทัดรัดพอดี (`text-xs font-bold`)[cite: 20]
+   * ปรับสีกรอบและพื้นหลังให้อ่อนลง สบายตา ไม่แย่งสายตาจากคอลัมน์อื่น[cite: 20]
+   * ข้อความขยายความเรื่องการต่อเหล็กปรับเป็นฟอนต์ขนาดเล็กกลมกลืน (`text-[9.5px] text-slate-500`) เพื่อให้อ่านภาพรวมของตารางได้สบายตาทุกตัวอักษร[cite: 20]
+
+2. **แก้ปัญหาตัวหนังสือตก-ขาดใน "แผนผังตัดเหล็ก & สต็อกเศษ (Cutting Plan)":**
+   * **ป้ายด้านซ้าย (ช่วงหมายเลขเส้น):** ขยายความกว้างและจัดเป็นบรรทัดเดียว ไม่ให้คำว่า `(45 เส้น)` ตกบรรทัดหรือแตกเป็นคำๆ อีกต่อไป[cite: 21]
+   * **ข้อความในท่อนเหล็กและเศษเหลือ:** ปรับข้อความให้กระชับและเพิ่มระบบป้องกันข้อความล้นขอบ (`min-w-0` + `truncate`) โดย:
+     * หากเป็นท่อนเหล็กที่มีการตัดหลายชิ้น จะแสดงเป็น `No.4 (1.1ม.)` เพื่อไม่ให้ข้อความยาวเกินความกว้างจริงของท่อนเหล็ก[cite: 21]
+     * ท่อนเศษเหลือจะปรับการแสดงผลให้อัตโนมัติ (เช่น `สต็อก +0.50ม.` หรือ `+0.40ม.`) ป้องกันไม่ให้ดันทะลุขอบขวาของกระดาษ ทำให้**เห็นครบทุกตัวอักษรและเห็นแท่งเหล็กเต็ม 100% ทั้งตอนใช้งานปกติและตอนพิมพ์**[cite: 21]
+
+---
+
+### โค้ดฉบับสมบูรณ์ (`index.html`)
+
+คัดลอกโค้ดนี้ไปวางแทนที่ในไฟล์ **`index.html`** บน GitHub แล้วกด **Commit changes**:
+
+```html
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CutSteel (C) - ตารางคำนวณสั่งตัดเหล็กรูปพรรณ</title>
+  
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%231e293b'/><text x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial, sans-serif' font-weight='900' font-size='68' fill='%2338bdf8'>C</text></svg>">
+  
+  <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
+  <link rel="stylesheet" href="[https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css](https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css)">
+  <style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    input[type=number]::-webkit-inner-spin-button, 
+    input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+
+    @media print {
+      @page {
+        size: landscape;
+        margin: 8mm 6mm 8mm 6mm;
+      }
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+        box-sizing: border-box !important;
+      }
+      html, body {
+        background-color: white !important;
+        color: #0f172a !important;
+        font-size: 11px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+      .no-print { display: none !important; }
+      #tab-barcut, #tab-boq, #tab-cuttingSheet { display: block !important; width: 100% !important; }
+      #tab-boq, #tab-cuttingSheet { page-break-before: always !important; break-before: page !important; padding-top: 5mm !important; }
+      thead { display: table-header-group !important; }
+      tr { page-break-inside: avoid !important; }
+      .print-header-row { display: table-row !important; }
+      .print-sheet-header { display: block !important; }
+      
+      input, select {
+        border: none !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        color: inherit !important;
+        font-weight: 800 !important;
+        width: 100% !important;
+        appearance: none !important;
+        -webkit-appearance: none !important;
+        text-align: inherit !important;
+        overflow: visible !important;
+      }
+      input::placeholder { color: transparent !important; }
+      .col-action { display: none !important; }
+      table, th, td { border-color: #94a3b8 !important; }
+
+      .col-profile-th, .col-profile-td, .row-profile {
+        min-width: 240px !important;
+        width: auto !important;
+        white-space: normal !important;
+        word-break: break-word !important;
+      }
+
+      /* ปรับขนาดป้ายจำนวนเส้นหลักตอนพิมพ์ให้พอดี สบายตา */
+      .bars-main-badge {
+        font-size: 11px !important;
+        font-weight: 700 !important;
+        color: #0369a1 !important;
+        background-color: #f0f9ff !important;
+        border: 1px solid #7dd3fc !important;
+        padding: 1px 6px !important;
+        border-radius: 4px !important;
+        display: inline-block !important;
+      }
+      .splice-note {
+        font-size: 9px !important;
+        color: #64748b !important;
+        font-weight: normal !important;
+        display: block !important;
+        margin-top: 1px !important;
+        line-height: 1.1 !important;
+      }
+
+      .cutting-bar-row {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        margin-bottom: 3px !important;
+      }
+      .bar-visual-container {
+        height: 26px !important;
+        width: 100% !important;
+        display: flex !important;
+        overflow: hidden !important;
+      }
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-900 text-sm font-semibold">
+
+  <!-- Header ด้านบน -->
+  <header class="bg-[#1b2434] text-white p-3 shadow-md border-b-4 border-cyan-500 no-print">
+    <div class="max-w-[1850px] mx-auto space-y-3">
+      
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <span class="bg-cyan-500 text-slate-950 font-black rounded-lg px-3 py-1 text-lg shadow">C</span>
+          <div>
+            <h1 class="text-base font-bold tracking-wide text-white">ระบบคำนวณสั่งตัดเหล็กรูปพรรณ (CutSteel System)</h1>
+            <p class="text-[11px] text-cyan-300 font-bold">V10.2 STRUCTURAL & REUSE OPTIMIZER (จัดการเศษเหล็กหมุนเวียน & ต่อเหล็กอัตโนมัติ)</p>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3">
+          <div class="flex items-center bg-slate-800 rounded px-3 py-1.5 border border-slate-600">
+            <span class="text-slate-300 mr-2 text-xs font-bold">ชื่อโครงการ:</span>
+            <input id="projName" oninput="syncPrintInfo()" type="text" placeholder="ระบุชื่อโครงการ..." class="bg-white text-slate-900 font-bold px-2 py-1 rounded text-xs w-52 outline-none">
+          </div>
+          <div class="flex items-center bg-slate-800 rounded px-3 py-1.5 border border-slate-600">
+            <span class="text-slate-300 mr-2 text-xs font-bold">หมวดหมู่งาน:</span>
+            <input id="jobCategory" oninput="syncPrintInfo()" type="text" placeholder="ระบุหมวดหมู่งาน..." class="bg-white text-slate-900 font-bold px-2 py-1 rounded text-xs w-48 outline-none">
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2 pt-1 no-print">
+        <button onclick="saveProjectToStorage()" class="bg-[#00897b] hover:bg-teal-700 text-white px-3.5 py-1.5 rounded-md flex items-center gap-2 font-bold shadow transition text-xs"><i class="fa-solid fa-floppy-disk"></i> บันทึกงานลงคลัง</button>
+        <button onclick="openProjectLibrary()" class="bg-[#455a64] hover:bg-slate-700 text-white px-3.5 py-1.5 rounded-md flex items-center gap-2 font-bold shadow transition text-xs"><i class="fa-solid fa-folder-open text-amber-400"></i> คลังโครงการส่วนตัว</button>
+        <button onclick="combineCurrentProjectJobs()" class="bg-[#5c6bc0] hover:bg-indigo-600 text-white px-3.5 py-1.5 rounded-md flex items-center gap-2 font-bold shadow transition text-xs"><i class="fa-solid fa-link"></i> รวมงานในโครงการ</button>
+        <button onclick="calculateCutting()" class="bg-[#7e57c2] hover:bg-purple-700 text-white px-4 py-1.5 rounded-md flex items-center gap-2 font-black shadow-md transition text-xs ring-2 ring-purple-300"><i class="fa-solid fa-bolt text-amber-300"></i> คำนวณความยาวสต็อก Auto ขั้นสูง</button>
+        <button onclick="clearCalculations()" class="bg-[#e53935] hover:bg-red-700 text-white px-3.5 py-1.5 rounded-md flex items-center gap-2 font-bold shadow transition text-xs"><i class="fa-solid fa-arrows-rotate"></i> ล้างข้อมูลคำนวณ & วิเคราะห์ใหม่</button>
+        <button onclick="triggerImportExcel()" class="bg-[#fb8c00] hover:bg-orange-600 text-white px-3.5 py-1.5 rounded-md flex items-center gap-2 font-bold shadow transition text-xs"><i class="fa-solid fa-file-import"></i> นำเข้าไฟล์ Excel</button>
+        <button onclick="resetTable()" class="bg-[#ffa000] hover:bg-amber-600 text-white px-3.5 py-1.5 rounded-md flex items-center gap-2 font-bold shadow transition text-xs"><i class="fa-solid fa-broom"></i> ล้างตารางเริ่มงานใหม่</button>
+        <button onclick="exportToCSV()" class="bg-[#2e7d32] hover:bg-green-700 text-white px-3.5 py-1.5 rounded-md flex items-center gap-2 font-bold shadow transition text-xs"><i class="fa-solid fa-file-excel"></i> Export Excel</button>
+        <button onclick="window.print()" class="bg-[#3949ab] hover:bg-indigo-800 text-white px-3.5 py-1.5 rounded-md flex items-center gap-2 font-bold shadow transition text-xs"><i class="fa-solid fa-print"></i> พิมพ์รายงานสมบูรณ์</button>
+        <input type="file" id="excelFileInput" accept=".csv, .txt" class="hidden" onchange="handleFileImport(event)">
+      </div>
+    </div>
+  </header>
+
+  <div class="max-w-[1850px] mx-auto p-3 space-y-3">
+    <!-- แท็บเปลี่ยนมุมมอง -->
+    <div class="flex items-center border-b-2 border-slate-300 bg-white rounded-t-lg px-2 pt-2 gap-2 shadow-sm no-print">
+      <button onclick="switchTab('barcut')" id="tabBtn-barcut" class="tab-btn px-4 py-2 font-black border-b-4 border-cyan-600 text-cyan-800 flex items-center gap-2 text-sm"><i class="fa-solid fa-table-list"></i> ตาราง Barcut คำนวณตัดเหล็ก</button>
+      <button onclick="switchTab('boq')" id="tabBtn-boq" class="tab-btn px-4 py-2 font-bold text-slate-500 hover:text-slate-800 flex items-center gap-2 text-sm"><i class="fa-solid fa-paint-roller text-amber-500"></i> สรุปรายการเหล็กและพื้นที่ทาสี (BOQ Sheet)</button>
+      <button onclick="switchTab('cuttingSheet')" id="tabBtn-cuttingSheet" class="tab-btn px-4 py-2 font-bold text-slate-500 hover:text-slate-800 flex items-center gap-2 text-sm"><i class="fa-solid fa-diagram-project text-purple-600"></i> แผนผังตัดเหล็ก & สต็อกเศษ (Cutting Plan)</button>
+    </div>
+
+    <!-- แถบตั้งค่าและเครื่องมือ -->
+    <div class="bg-white p-3 rounded-lg border-2 border-slate-300 shadow-sm flex flex-wrap items-center justify-between gap-3 no-print">
+      <div class="flex flex-wrap items-center gap-3">
+        <div class="flex items-center gap-1.5 bg-slate-100 border border-slate-300 rounded px-3 py-1">
+          <span class="text-slate-700 font-bold">ใบตัดกินเนื้อ:</span>
+          <input id="kerfInput" oninput="triggerAutoCalc()" type="number" value="0" class="w-12 text-center font-black bg-white border border-slate-400 rounded text-sm px-1 text-slate-900">
+          <span class="text-slate-600 font-bold">มม.</span>
+        </div>
+        <div class="flex items-center gap-1.5 bg-slate-100 border border-slate-300 rounded px-3 py-1">
+          <span class="text-slate-700 font-bold">เศษขั้นต่ำเก็บสต็อก:</span>
+          <input id="minScrapInput" oninput="triggerAutoCalc()" type="number" value="500" class="w-16 text-center font-black bg-white border border-slate-400 rounded text-sm px-1 text-slate-900">
+          <span class="text-slate-600 font-bold">มม.</span>
+        </div>
+        <span class="text-xs text-emerald-800 bg-emerald-100 px-3 py-1.5 rounded border border-emerald-300 font-bold flex items-center gap-1">
+          <i class="fa-solid fa-calculator"></i> พิมพ์สูตรคำนวณได้ | ระบบสรุปรวบผังตัดเหล็กให้อ่านง่าย สบายตา
+        </span>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button onclick="calculateCutting()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2 rounded font-black flex items-center gap-2 shadow transition text-sm"><i class="fa-solid fa-bolt"></i> คำนวณตัดเหล็กทันที</button>
+        <button onclick="addNewRow(null, true)" class="bg-cyan-600 hover:bg-cyan-700 text-white px-5 py-2 rounded font-black flex items-center gap-2 shadow transition text-sm"><i class="fa-solid fa-plus"></i> เพิ่มรายการ</button>
+      </div>
+    </div>
+
+    <!-- 1. ตาราง Barcut -->
+    <div id="tab-barcut" class="space-y-3">
+      <div class="bg-white rounded-lg border-2 border-slate-300 shadow overflow-x-auto">
+        <table class="w-full text-center border-collapse text-xs" id="barcutTable">
+          <thead class="bg-slate-200 text-slate-900 border-b-2 border-slate-400 font-black">
+            <tr class="hidden print-header-row bg-white text-black border-b-2 border-slate-800">
+              <th colspan="15" class="py-2.5 px-3 text-left bg-white border-none">
+                <div class="flex justify-between items-center text-xs font-black text-black">
+                  <span class="text-sm">🏗️ <b>ระบบคำนวณสั่งตัดเหล็กรูปพรรณ (CutSteel System) - ตาราง Barcut</b></span>
+                  <span><b>ชื่อโครงการ:</b> <span class="printProjNameRef underline text-black">-</span></span>
+                  <span><b>หมวดหมู่งาน:</b> <span class="printJobCatRef underline text-black">-</span></span>
+                  <span class="text-[10px] text-slate-600">วันที่พิมพ์: <span class="printDateRef"></span></span>
+                </div>
+              </th>
+            </tr>
+            <tr class="border-b-2 border-slate-400">
+              <th class="py-2.5 px-1 border-r border-slate-300 w-10 text-sm">#</th>
+              <th class="py-2.5 px-2 border-r border-slate-300 w-36">COMPONENT<br><span class="text-[11px] text-slate-600 font-bold">ชื่อชิ้นงาน</span></th>
+              <th class="py-2.5 px-2 border-r border-slate-300 w-64 min-w-[240px] bg-emerald-100 text-emerald-950 col-profile-th">TYPE / หน้าตัดเหล็กรูปพรรณ<br><span class="text-[11px] text-emerald-700 font-bold">(เหมือนกัน = ดึงเศษใช้ร่วมกัน)</span></th>
+              <th class="py-2.5 px-1 border-r border-slate-300 w-24 bg-emerald-100 text-emerald-950">น.น. มาตรฐาน<br><span class="text-[11px] text-emerald-700 font-bold">(กก./ม.)</span></th>
+              <th class="py-2.5 px-1 border-r border-slate-300 w-28 bg-blue-100 text-blue-950">พ.ท. ผิวรอบรูป<br><span class="text-[11px] text-blue-700 font-bold">(ตร.ม./ม.)</span></th>
+              <th class="py-2.5 px-2 border-r border-slate-300 bg-yellow-100 text-amber-950 w-32 min-w-[130px]">ความยาวสต็อก<br><span class="text-[11px] text-amber-700 font-bold">6.0ม. / 12.0ม.</span></th>
+              <th class="py-2.5 px-1 border-r border-slate-300 bg-yellow-100 text-amber-950 w-12">ชุด<br><span class="text-[11px] text-amber-700 font-bold">SET</span></th>
+              <th class="py-2.5 px-1 border-r border-slate-300 bg-yellow-100 text-amber-950 w-12">ต่อชุด<br><span class="text-[11px] text-amber-700 font-bold">QTY</span></th>
+              <th class="py-2.5 px-1 border-r border-slate-300 bg-yellow-200 text-amber-950 font-black w-12">รวมชิ้น<br><span class="text-[11px] text-amber-800 font-bold">TOTAL</span></th>
+              <th class="py-2.5 px-2 border-r border-slate-300 bg-cyan-100 text-cyan-950 font-black w-28">ยาวตัด/ชิ้น (ม.)<br><span class="text-[11px] text-cyan-700 font-bold">CUT LENGTH</span></th>
+              <th class="py-2.5 px-2 border-r border-slate-300 bg-amber-200 text-amber-950 font-black w-24">พ.ท. ทาสีรวม<br><span class="text-[11px] text-amber-800 font-bold">(ตร.ม.)</span></th>
+              <th class="py-2.5 px-2 border-r border-slate-300 bg-cyan-200 text-cyan-950 font-black w-32">ท่อนหลัก (BARS)<br><span class="text-[11px] text-cyan-800 font-bold">เบิกเส้นใหม่</span></th>
+              <th class="py-2.5 px-2 border-r border-slate-300 bg-emerald-200 text-emerald-950 font-black w-48">ดึงเศษจาก No.<br><span class="text-[11px] text-emerald-800 font-bold">นำเศษมาใช้</span></th>
+              <th class="py-2.5 px-2 border-r border-slate-300 bg-rose-100 text-rose-950 font-black w-60">รายละเอียดเศษเหลือ (OFFCUT)<br><span class="text-[11px] text-rose-700 font-bold">นำไปใช้ต่อใน No. / เก็บสต็อก</span></th>
+              <th class="py-2.5 px-2 border-r border-slate-300 bg-rose-200 text-rose-950 font-black w-20">น.น. เศษ<br><span class="text-[11px] text-rose-800 font-bold">(กก.)</span></th>
+              <th class="py-2.5 px-2 w-16 text-slate-800 font-black col-action">จัดการ</th>
+            </tr>
+          </thead>
+          <tbody id="barcutTbody" class="divide-y-2 divide-slate-200"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 2. ตาราง BOQ -->
+    <div id="tab-boq" class="hidden bg-white p-5 rounded-lg border-2 border-slate-300 shadow space-y-4">
+      <div class="hidden print-sheet-header mb-3 border-b-2 border-slate-800 pb-2">
+        <div class="flex justify-between items-center text-xs font-black text-black">
+          <span class="text-sm">🏗️ <b>สรุปรายการสั่งซื้อเหล็ก และพื้นที่ทาสีโครงการ (BOQ Summary)</b></span>
+          <span><b>ชื่อโครงการ:</b> <span class="printProjNameRef underline text-black">-</span></span>
+          <span><b>หมวดหมู่งาน:</b> <span class="printJobCatRef underline text-black">-</span></span>
+          <span class="text-[10px] text-slate-600">วันที่พิมพ์: <span class="printDateRef"></span></span>
+        </div>
+      </div>
+      <h2 class="text-base font-black text-slate-800 flex items-center gap-2 border-b-2 pb-2 no-print"><i class="fa-solid fa-file-invoice text-cyan-600"></i> สรุปรายการสั่งซื้อเหล็ก และพื้นที่ทาสีโครงการ (BOQ Summary)</h2>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse text-sm" id="boqTable">
+          <thead>
+            <tr class="bg-slate-200 text-slate-900 border-b-2 font-black">
+              <th class="p-2.5 border border-slate-300">หน้าตัดเหล็กรูปพรรณ (TYPE)</th>
+              <th class="p-2.5 border border-slate-300 text-right">น.น. (กก./ม.)</th>
+              <th class="p-2.5 border border-slate-300 text-right">ความยาวใช้จริง (ม.)</th>
+              <th class="p-2.5 border border-slate-300 text-right bg-amber-100 text-amber-950">พื้นที่ทาสีรวม (ตร.ม.)</th>
+              <th class="p-2.5 border border-slate-300 text-center bg-cyan-100 text-cyan-950">เบิกเหล็กใหม่ (เส้น)</th>
+              <th class="p-2.5 border border-slate-300 text-right text-purple-900">เศษเข้าสต็อก (ม.)</th>
+              <th class="p-2.5 border border-slate-300 text-right text-emerald-900">น.น. สั่งซื้อรวม (กก.)</th>
+              <th class="p-2.5 border border-slate-300 text-right">Yield ใช้วัสดุ (%)</th>
+            </tr>
+          </thead>
+          <tbody id="boqTbody"></tbody>
+          <tfoot id="boqTfoot" class="font-black bg-slate-100 border-t-2 border-slate-400"></tfoot>
+        </table>
+      </div>
+    </div>
+
+    <!-- 3. แผนผังการตัด -->
+    <div id="tab-cuttingSheet" class="hidden bg-white p-5 rounded-lg border-2 border-slate-300 shadow space-y-4">
+      <div class="hidden print-sheet-header mb-3 border-b-2 border-slate-800 pb-2">
+        <div class="flex justify-between items-center text-xs font-black text-black">
+          <span class="text-sm">🏗️ <b>แผนผังการจัดตัดเหล็กทีละท่อน & การหมุนเวียนเศษ (Cutting Pattern)</b></span>
+          <span><b>ชื่อโครงการ:</b> <span class="printProjNameRef underline text-black">-</span></span>
+          <span><b>หมวดหมู่งาน:</b> <span class="printJobCatRef underline text-black">-</span></span>
+          <span class="text-[10px] text-slate-600">วันที่พิมพ์: <span class="printDateRef"></span></span>
+        </div>
+      </div>
+      <h2 class="text-base font-black text-slate-800 flex items-center gap-2 border-b-2 pb-2 no-print"><i class="fa-solid fa-bars-staggered text-purple-600"></i> แผนผังการจัดตัดเหล็กทีละท่อน & การหมุนเวียนเศษ (Cutting Pattern)</h2>
+      <div id="cuttingDiagramContainer" class="space-y-2 w-full"></div>
+    </div>
+  </div>
+
+  <!-- Modal หน้าต่างระบบคลังโครงการส่วนตัว -->
+  <div id="libraryModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 no-print">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full p-6 space-y-4 border border-slate-200">
+      <div class="flex justify-between items-center border-b pb-3">
+        <h3 class="text-xl font-black text-slate-800 flex items-center gap-2">
+          <span class="text-2xl text-amber-500">📁</span> ระบบคลังโครงการส่วนตัว
+        </h3>
+        <button onclick="closeProjectLibrary()" class="text-rose-500 hover:text-rose-700 text-3xl font-black transition">✕</button>
+      </div>
+
+      <div id="libraryList" class="space-y-4 max-h-[60vh] overflow-y-auto pr-1"></div>
+
+      <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-200">
+        <div class="flex flex-wrap items-center gap-2">
+          <button onclick="libraryAddNewJob()" class="bg-[#1976d2] hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-bold flex items-center gap-2 text-xs shadow transition"><span class="text-sm font-black">+</span> เพิ่มงานใหม่</button>
+          <button onclick="exportJSONLibrary()" class="bg-[#00897b] hover:bg-teal-700 text-white px-4 py-2 rounded-lg font-bold flex items-center gap-2 text-xs shadow transition"><span>💾</span> สำรองคลัง (.json)</button>
+          <button onclick="triggerImportJSON()" class="bg-[#f4511e] hover:bg-orange-700 text-white px-4 py-2 rounded-lg font-bold flex items-center gap-2 text-xs shadow transition"><span>📥</span> นำเข้าคลัง</button>
+          <input type="file" id="jsonLibraryInput" accept=".json" class="hidden" onchange="handleImportJSON(event)">
+        </div>
+        <button onclick="closeProjectLibrary()" class="bg-[#37474f] hover:bg-slate-800 text-white px-6 py-2 rounded-lg font-bold text-xs shadow transition">ปิดหน้าต่าง</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let rowCount = 0;
+    let autoCalcTimer = null;
+
+    function escapeHtmlAttr(str) {
+      if (str === null || str === undefined) return '';
+      return str.toString()
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+
+    function isFormulaText(str) {
+      if (!str) return false;
+      const s = str.toString().trim();
+      return s.startsWith('=') || /[+\-*/]/.test(s);
+    }
+
+    function evaluateFormula(val) {
+      if (val === null || val === undefined) return '';
+      let str = val.toString().trim();
+      if (str.startsWith('=')) str = str.substring(1).trim();
+      str = str.replace(/[xX]/g, '*');
+
+      if (/[+\-*/]/.test(str)) {
+        if (/^[0-9.\+\-\*\/\(\)\s]+$/.test(str)) {
+          try {
+            const res = Function(`'use strict'; return (${str})`)();
+            if (!isNaN(res) && isFinite(res)) {
+              return (Math.round(res * 1000) / 1000).toString();
+            }
+          } catch(e) {}
+        }
+      }
+      return str;
+    }
+
+    function handleFormulaFocus(el) {
+      if (el.dataset.formula && isFormulaText(el.dataset.formula)) {
+        el.value = el.dataset.formula;
+      }
+      setTimeout(() => { if (el.select) el.select(); }, 10);
+    }
+
+    function handleFormulaInput(el) {
+      const val = el.value.trim();
+      if (isFormulaText(val)) {
+        el.dataset.formula = val;
+      } else {
+        el.dataset.formula = '';
+      }
+      triggerAutoCalc();
+    }
+
+    function handleFormulaBlur(el, id) {
+      const val = el.value.trim();
+      if (isFormulaText(val)) {
+        el.dataset.formula = val;
+        el.value = evaluateFormula(val);
+      } else if (el.dataset.formula && isFormulaText(el.dataset.formula)) {
+        el.value = evaluateFormula(el.dataset.formula);
+      }
+      updateRowCalc(id);
+      triggerAutoCalc();
+    }
+
+    function syncPrintInfo() {
+      const pName = document.getElementById('projName').value.trim() || 'ไม่ได้ระบุชื่อโครงการ';
+      const jCat = document.getElementById('jobCategory').value.trim() || 'ไม่ได้ระบุหมวดหมู่งาน';
+      const dNow = new Date().toLocaleDateString('th-TH');
+
+      document.querySelectorAll('.printProjNameRef').forEach(el => el.innerText = pName);
+      document.querySelectorAll('.printJobCatRef').forEach(el => el.innerText = jCat);
+      document.querySelectorAll('.printDateRef').forEach(el => el.innerText = dNow);
+    }
+
+    window.onbeforeprint = function() {
+      syncPrintInfo();
+      calculateCutting(true);
+    };
+
+    window.onload = function() {
+      addNewRow();
+      setupEnterKeyNavigation();
+      syncPrintInfo();
+    };
+
+    function switchTab(tabId) {
+      ['barcut', 'boq', 'cuttingSheet'].forEach(id => {
+        document.getElementById(`tab-${id}`).classList.add('hidden');
+        document.getElementById(`tabBtn-${id}`).className = "tab-btn px-4 py-2 font-bold text-slate-500 hover:text-slate-800 flex items-center gap-2 text-sm";
+      });
+      document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+      document.getElementById(`tabBtn-${tabId}`).className = "tab-btn px-4 py-2 font-black border-b-4 border-cyan-600 text-cyan-800 flex items-center gap-2 text-sm";
+    }
+
+    function setupEnterKeyNavigation() {
+      const tbody = document.getElementById('barcutTbody');
+      tbody.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          e.target.blur();
+
+          const focusable = Array.from(tbody.querySelectorAll('input:not([type=button]), select'));
+          const currentIndex = focusable.indexOf(e.target);
+
+          if (currentIndex > -1) {
+            if (currentIndex + 1 < focusable.length) {
+              const nextEl = focusable[currentIndex + 1];
+              nextEl.focus();
+              if (nextEl.select) nextEl.select();
+            } else {
+              addNewRow(null, true);
+            }
+          }
+        }
+      });
+    }
+
+    function triggerAutoCalc() {
+      clearTimeout(autoCalcTimer);
+      autoCalcTimer = setTimeout(() => {
+        calculateCutting(true);
+      }, 300);
+    }
+
+    function addNewRow(data = null, autoFocus = false) {
+      rowCount++;
+      const tbody = document.getElementById('barcutTbody');
+      const tr = document.createElement('tr');
+      tr.id = `row-${rowCount}`;
+      tr.dataset.rowid = rowCount;
+      tr.className = "hover:bg-cyan-50/40 transition border-b border-slate-300";
+
+      const initComp = data ? data.comp : '';
+      const initProfile = data ? data.profile : '';
+      const initWeight = data ? data.weight : '';
+      const evalWeight = evaluateFormula(initWeight);
+
+      const initPaint = data ? data.paintFactor : '';
+      const evalPaint = evaluateFormula(initPaint);
+
+      const initCutLen = data ? data.cutLen : '';
+      const evalCutLen = evaluateFormula(initCutLen);
+
+      tr.innerHTML = `
+        <td class="py-2 px-1 border-r border-slate-300 font-mono font-black text-slate-700 text-sm row-idx">${tbody.children.length + 1}</td>
+        <td class="py-1 px-1.5 border-r border-slate-300">
+          <input type="text" oninput="triggerAutoCalc()" value="${escapeHtmlAttr(initComp)}" placeholder="เช่น เสา C-1" class="row-comp w-full border-2 border-slate-300 rounded px-2 py-1.5 font-bold text-slate-900 focus:border-cyan-600 outline-none">
+        </td>
+        <td class="py-1 px-1.5 border-r border-slate-300 bg-emerald-50/50 min-w-[240px] col-profile-td">
+          <input type="text" oninput="triggerAutoCalc()" value="${escapeHtmlAttr(initProfile)}" placeholder="เช่น เหล็กกลม 4&quot;x หนา 4.5 มม." class="row-profile w-full border-2 border-emerald-400 bg-white rounded px-2 py-1.5 font-black text-emerald-950 focus:border-emerald-600 outline-none text-xs">
+        </td>
+        <td class="py-1 px-1 border-r border-slate-300 bg-emerald-50/50">
+          <input type="text" data-formula="${escapeHtmlAttr(initWeight)}" onfocus="handleFormulaFocus(this)" onblur="handleFormulaBlur(this, ${rowCount})" oninput="handleFormulaInput(this)" value="${escapeHtmlAttr(evalWeight)}" placeholder="0.00" class="eval-formula row-weight w-full text-center border-2 border-emerald-300 bg-white rounded px-1 py-1.5 font-mono font-bold text-slate-900 focus:border-emerald-600 outline-none">
+        </td>
+        <td class="py-1 px-1 border-r border-slate-300 bg-blue-50/50">
+          <input type="text" data-formula="${escapeHtmlAttr(initPaint)}" onfocus="handleFormulaFocus(this)" onblur="handleFormulaBlur(this, ${rowCount})" oninput="handleFormulaInput(this)" value="${escapeHtmlAttr(evalPaint)}" placeholder="เช่น (50+25)*2/1000" class="eval-formula row-paint-factor w-full text-center border-2 border-blue-300 bg-white rounded px-1 py-1.5 font-mono font-bold text-slate-900 focus:border-blue-600 outline-none">
+        </td>
+        <td class="py-1 px-1 border-r border-slate-300 bg-yellow-50/50 w-32 min-w-[130px]">
+          <select onchange="triggerAutoCalc()" class="row-stock w-full border-2 border-amber-300 bg-white rounded px-2 py-1.5 text-xs font-black text-purple-900 outline-none">
+            <option value="6.0" ${data && data.stock == '6.0' ? 'selected' : ''}>🔒 6.0 เมตร</option>
+            <option value="12.0" ${data && data.stock == '12.0' ? 'selected' : ''}>🔒 12.0 เมตร</option>
+          </select>
+        </td>
+        <td class="py-1 px-1 border-r border-slate-300 bg-yellow-50/50">
+          <input type="number" oninput="updateRowCalc(${rowCount})" value="${data ? data.set : 1}" class="row-set w-full text-center border-2 border-amber-300 rounded px-1 py-1.5 font-black text-slate-900 focus:border-amber-600 outline-none">
+        </td>
+        <td class="py-1 px-1 border-r border-slate-300 bg-yellow-50/50">
+          <input type="number" oninput="updateRowCalc(${rowCount})" value="${data ? data.qty : 1}" class="row-qty w-full text-center border-2 border-amber-300 rounded px-1 py-1.5 font-black text-slate-900 focus:border-amber-600 outline-none">
+        </td>
+        <td class="py-1 px-1 border-r border-slate-300 bg-yellow-100 font-mono font-black text-amber-950 text-sm row-total">1</td>
+        <td class="py-1 px-1 border-r border-slate-300 bg-cyan-50/50">
+          <input type="text" data-formula="${escapeHtmlAttr(initCutLen)}" onfocus="handleFormulaFocus(this)" onblur="handleFormulaBlur(this, ${rowCount})" oninput="handleFormulaInput(this)" value="${escapeHtmlAttr(evalCutLen)}" placeholder="0.00 หรือสูตร" class="eval-formula row-cutlen w-full text-center border-2 border-cyan-400 rounded px-1 py-1.5 font-mono font-black text-cyan-950 text-sm focus:border-cyan-600 outline-none">
+        </td>
+        <td class="py-1 px-1 border-r border-slate-300 bg-amber-100 font-mono font-black text-amber-950 text-sm row-paint-total">-</td>
+        
+        <!-- ช่องท่อนหลักเบิกใหม่: ปรับขนาดตัวหนังสือให้กะทัดรัด สบายตา -->
+        <td class="py-1 px-1.5 border-r border-slate-300 bg-cyan-50/70 font-semibold text-cyan-950 text-xs text-center row-bars-new">-</td>
         <td class="py-1 px-2 border-r border-slate-300 bg-emerald-50/70 font-bold text-emerald-950 text-xs text-left row-bars-reuse">-</td>
 
         <td class="py-1 px-2 border-r border-slate-300 bg-rose-50 text-xs font-bold text-rose-950 text-left row-offcut">-</td>
@@ -816,9 +2261,10 @@
             });
           });
 
+          // ปรับขนาดป้ายจำนวนเส้นให้พอดี สบายตา
           if (newBarsTotal > 0) {
-            let spliceBadge = spliceDetailByRow[it.rowId] ? `<span class="splice-note text-[10px] text-slate-500 font-semibold block mt-1">(${spliceDetailByRow[it.rowId]})</span>` : '';
-            tr.querySelector('.row-bars-new').innerHTML = `<span class="bars-main-badge bg-cyan-100 text-cyan-950 px-3 py-1 rounded-md font-black text-sm border-2 border-cyan-400 inline-block shadow-xs">${newBarsTotal} เส้น</span>${spliceBadge}`;
+            let spliceBadge = spliceDetailByRow[it.rowId] ? `<span class="splice-note text-[9.5px] text-slate-500 font-normal block mt-0.5 leading-tight">(${spliceDetailByRow[it.rowId]})</span>` : '';
+            tr.querySelector('.row-bars-new').innerHTML = `<span class="bars-main-badge bg-cyan-50 text-cyan-800 px-2.5 py-0.5 rounded font-bold text-xs border border-cyan-300 inline-block shadow-xs">${newBarsTotal} เส้น</span>${spliceBadge}`;
           } else {
             tr.querySelector('.row-bars-new').innerText = '-';
           }
@@ -884,9 +2330,7 @@
           yieldPct: yieldPct
         };
 
-        // =========================================================================
-        // สรุปรวบผังการตัด: จัดกลุ่มท่อนเหล็กที่มี Pattern เหมือนกันเข้าด้วยกัน
-        // =========================================================================
+        // สรุปรวบผังการตัด: จัดกลุ่มท่อนเหล็กที่มี Pattern เหมือนกัน
         let groupedBars = [];
         bars.forEach(b => {
           let cutsSig = b.cuts.map(c => `${c.rowNo}_${c.length.toFixed(3)}`).join('|');
@@ -923,51 +2367,69 @@
           let cutsVisual = '';
 
           b.cuts.forEach(c => {
-            let pct = (c.length / b.originalLen * 100).toFixed(1);
+            let pct = (c.length / b.originalLen * 100).toFixed(2);
             let isFull = b.isDedicatedFull;
-            let countLabel = g.count > 1 ? ` (${g.count} ท่อน)` : '';
             let lenDisp = parseFloat(c.length.toFixed(2));
+            
+            // ปรับข้อความให้กระชับ ไม่ดันจนล้นกล่อง
+            let cutText = '';
+            if (b.cuts.length === 1) {
+              cutText = `No.${c.rowNo} (${lenDisp}ม.)${g.count > 1 ? ` (${g.count} ท่อน)` : ''}`;
+            } else {
+              cutText = `No.${c.rowNo} (${lenDisp}ม.)`;
+            }
 
             cutsVisual += `
-              <div style="width: ${pct}%; min-width: 60px;" class="${isFull ? 'bg-indigo-700' : 'bg-cyan-700'} text-white font-bold text-[11px] flex items-center justify-center border-r-2 border-white/60 shrink-0 whitespace-nowrap px-1" title="No.${c.rowNo} ${c.comp}: ${c.length} ม. ${g.count > 1 ? `(ทั้งหมด ${g.count} ท่อน)` : ''}">
-                No.${c.rowNo} (${lenDisp}ม.)${countLabel}
+              <div style="width: ${pct}%;" class="${isFull ? 'bg-indigo-700' : 'bg-cyan-700'} text-white font-bold text-[10px] flex items-center justify-center border-r border-white/60 px-0.5 min-w-0" title="No.${c.rowNo} ${c.comp}: ${c.length} ม. ${g.count > 1 ? `(ทั้งหมด ${g.count} ท่อน)` : ''}">
+                <span class="truncate">${cutText}</span>
               </div>
             `;
           });
 
           let rem = Math.max(0, b.remaining);
-          let remPct = (rem / b.originalLen * 100).toFixed(1);
+          let remPct = (rem / b.originalLen * 100).toFixed(2);
           let isKeep = rem >= minScrapM;
-          let remCountText = g.count > 1 ? ` (${g.count} ท่อน)` : '';
           let remLabel = '';
+          let remFullTitle = '';
 
           if (b.isDedicatedFull) {
             remLabel = '';
-          } else if (isKeep) {
-            remLabel = `สต็อก +${rem.toFixed(2)}ม.${remCountText}`;
-          } else if (rem > 0.05) {
-            remLabel = `เศษ ${rem.toFixed(2)}ม.${remCountText}`;
-          } else {
-            remLabel = `พอดี${remCountText}`;
+          } else if (rem > 0) {
+            let typeText = isKeep ? 'สต็อก' : 'เศษ';
+            remFullTitle = `${typeText} +${rem.toFixed(2)}ม. ${g.count > 1 ? `(ทั้งหมด ${g.count} ท่อน)` : ''}`;
+            
+            // ปรับขนาดข้อความเศษเหลือให้พอดีกับความกว้าง ไม่ตกขอบ
+            if (rem < 0.6) {
+              remLabel = isKeep ? `+${rem.toFixed(2)}ม.` : `${rem.toFixed(2)}ม.`;
+            } else if (rem < 1.2) {
+              remLabel = `${typeText} +${rem.toFixed(2)}ม.`;
+            } else {
+              remLabel = `${typeText} +${rem.toFixed(2)}ม.${g.count > 1 ? ` (${g.count}ท่อน)` : ''}`;
+            }
           }
 
           if (remLabel) {
             cutsVisual += `
-              <div style="width: ${remPct}%; min-width: 68px;" class="${isKeep ? 'bg-purple-200 text-purple-950 font-black' : 'bg-slate-300 text-slate-800 font-bold'} text-[11px] flex items-center justify-center shrink-0 whitespace-nowrap px-1 border-l border-slate-400" title="${remLabel}">
-                ${remLabel}
+              <div style="width: ${remPct}%;" class="${isKeep ? 'bg-purple-200 text-purple-950 font-black' : 'bg-slate-300 text-slate-800 font-bold'} text-[10px] flex items-center justify-center px-0.5 border-l border-slate-400 min-w-0" title="${remFullTitle}">
+                <span class="truncate">${remLabel}</span>
               </div>
             `;
           }
 
-          // แสดงป้ายช่วงหมายเลข เช่น เส้น #1 - #45 (45 เส้น)
-          let barIndexLabel = g.count > 1 
-            ? `เส้น #${g.startIndex} - #${g.endIndex} <span class="bg-cyan-100 text-cyan-950 px-1.5 py-0.5 rounded text-[10px] font-black border border-cyan-400">(${g.count} เส้น)</span>`
-            : `เส้น #${g.startIndex}`;
+          // ป้ายช่วงหมายเลขเส้นด้านซ้ายแบบบรรทัดเดียว ไม่แตกบรรทัด
+          let barIndexLabel = `
+            <div class="flex items-center gap-1.5 whitespace-nowrap">
+              <span>เส้น #${g.startIndex}${g.count > 1 ? ` - #${g.endIndex}` : ''}</span>
+              ${g.count > 1 ? `<span class="bg-cyan-100 text-cyan-900 border border-cyan-400 px-1.5 py-0.2 rounded text-[10px] font-black">(${g.count} เส้น)</span>` : ''}
+            </div>
+          `;
 
           diagramHtml += `
-            <div class="cutting-bar-row flex items-center gap-2 w-full">
-              <span class="w-40 font-mono text-xs text-slate-800 font-black shrink-0">${barIndexLabel}</span>
-              <div class="flex-1 bg-slate-200 rounded-md flex overflow-hidden border border-slate-400 shadow-inner h-8 bar-visual-container">
+            <div class="cutting-bar-row flex items-center gap-2.5 w-full">
+              <div class="w-44 shrink-0 font-mono text-xs text-slate-800 font-bold flex items-center">
+                ${barIndexLabel}
+              </div>
+              <div class="flex-1 bg-slate-200 rounded-md flex overflow-hidden border border-slate-400 shadow-inner h-7 bar-visual-container min-w-0">
                 ${cutsVisual}
               </div>
             </div>
