@@ -75,10 +75,11 @@
         border: 1px solid #7dd3fc !important;
         padding: 1px 6px !important;
         border-radius: 4px !important;
+        white-space: nowrap !important;
         display: inline-block !important;
       }
       .splice-note {
-        font-size: 9px !important;
+        font-size: 8.5px !important;
         color: #64748b !important;
         font-weight: normal !important;
         display: block !important;
@@ -89,10 +90,10 @@
       .cutting-bar-row {
         page-break-inside: avoid !important;
         break-inside: avoid !important;
-        margin-bottom: 3px !important;
+        margin-bottom: 4px !important;
       }
       .bar-visual-container {
-        height: 26px !important;
+        height: 28px !important;
         width: 100% !important;
         display: flex !important;
         overflow: hidden !important;
@@ -164,7 +165,7 @@
           <span class="text-slate-600 font-bold">มม.</span>
         </div>
         <span class="text-xs text-emerald-800 bg-emerald-100 px-3 py-1.5 rounded border border-emerald-300 font-bold flex items-center gap-1">
-          <i class="fa-solid fa-calculator"></i> พิมพ์สูตรคำนวณได้ | ระบบสรุปรวบผังตัดเหล็กให้อ่านง่าย สบายตา
+          <i class="fa-solid fa-calculator"></i> พิมพ์สูตรคำนวณได้ | ระบบคำนวณตามความยาวสุทธิจริง ตัดท่อนเต็มก่อนและดึงเศษเท่าที่จำเป็น
         </span>
       </div>
 
@@ -462,7 +463,6 @@
         </td>
         <td class="py-1 px-1 border-r border-slate-300 bg-amber-100 font-mono font-black text-amber-950 text-sm row-paint-total">-</td>
         
-        <!-- ช่องท่อนหลักเบิกใหม่: ปรับให้ขนาดพอดี สบายตา -->
         <td class="py-1 px-1.5 border-r border-slate-300 bg-cyan-50/70 font-semibold text-cyan-950 text-xs text-center row-bars-new">-</td>
         <td class="py-1 px-2 border-r border-slate-300 bg-emerald-50/70 font-bold text-emerald-950 text-xs text-left row-bars-reuse">-</td>
 
@@ -573,7 +573,7 @@
       document.getElementById('cuttingDiagramContainer').innerHTML = '<p class="text-center p-6 text-slate-500 font-bold">กดคำนวณเพื่อแสดงแผนผังการตัด</p>';
     }
 
-    // ฟังก์ชันคำนวณตัดเหล็ก: ตัดแบบปกติ ไม่หักใบตัดกินเนื้อ + สรุปรวบผังตัดเหล็ก
+    // ฟังก์ชันคำนวณตัดเหล็ก: ตัดท่อนเต็มก่อนเพื่อลดการดึงเศษเกินจำเป็น
     function calculateCutting(isSilent = false) {
       const kerfM = (parseFloat(document.getElementById('kerfInput').value) || 0) / 1000;
       const minScrapM = (parseFloat(document.getElementById('minScrapInput').value) || 500) / 1000;
@@ -637,11 +637,13 @@
       let sumAllPurchasedKg = 0;
 
       for (const [normKey, group] of Object.entries(groups)) {
-        let cuts = [];
+        let bars = [];
+        let cutsForPool = [];
         let fullBarsByRow = {};
         let spliceDetailByRow = {};
         const stdLen = group.stockLen;
 
+        // 1. ตรวจสอบการต่อเหล็ก (ความยาวเกินสต็อก) และแยกท่อนเต็มที่ตัดได้ลงตัว
         group.items.forEach(it => {
           const cutLen = it.cutLen;
           const total = it.total;
@@ -654,39 +656,8 @@
             fullBarsByRow[it.rowId] = totalFullBars;
             spliceDetailByRow[it.rowId] = `ต่อเหล็ก: เต็ม ${stdLen}ม. x ${fullPerPiece}` + (remPerPiece > 0 ? ` + ตัดต่อ ${remPerPiece.toFixed(2)}ม.` : '');
 
-            if (remPerPiece > 0) {
-              for (let i = 0; i < total; i++) {
-                cuts.push({
-                  rowId: it.rowId,
-                  rowNo: it.rowNo,
-                  comp: `${it.comp} (ท่อนต่อ)`,
-                  length: remPerPiece,
-                  isSpliceRem: true
-                });
-              }
-            }
-          } else {
-            for (let i = 0; i < total; i++) {
-              cuts.push({
-                rowId: it.rowId,
-                rowNo: it.rowNo,
-                comp: it.comp,
-                length: cutLen,
-                isSpliceRem: false
-              });
-            }
-          }
-        });
-
-        cuts.sort((a, b) => b.length - a.length);
-
-        let bars = [];
-
-        // 1. เพิ่มท่อนเต็มสำหรับการต่อเหล็ก
-        group.items.forEach(it => {
-          if (fullBarsByRow[it.rowId] > 0) {
-            const count = fullBarsByRow[it.rowId];
-            for (let k = 0; k < count; k++) {
+            // เพิ่มท่อนเต็ม 100% สำหรับการต่อเหล็ก
+            for (let k = 0; k < totalFullBars; k++) {
               bars.push({
                 isDedicatedFull: true,
                 rowId: it.rowId,
@@ -701,16 +672,86 @@
                 }]
               });
             }
+
+            // ชิ้นส่วนตัดต่อส่งไปรวมใน Pool
+            if (remPerPiece > 0) {
+              for (let i = 0; i < total; i++) {
+                cutsForPool.push({
+                  rowId: it.rowId,
+                  rowNo: it.rowNo,
+                  comp: `${it.comp} (ท่อนต่อ)`,
+                  length: remPerPiece,
+                  isSpliceRem: true
+                });
+              }
+            }
+          } else {
+            fullBarsByRow[it.rowId] = 0;
+            spliceDetailByRow[it.rowId] = '';
+
+            // ตรวจสอบว่าความยาวตัดนี้ ตัดเส้นมาตรฐานได้ลงตัวพอดีหรือไม่ (เช่น 1.2ม. ได้ 5 ท่อน, 0.75ม. ได้ 8 ท่อน)
+            const piecesPerBar = Math.floor(stdLen / cutLen);
+            const remExact = Math.round((stdLen - (piecesPerBar * cutLen)) * 1000) / 1000;
+
+            if (remExact === 0 && piecesPerBar > 0 && total >= piecesPerBar) {
+              const fullBarsCount = Math.floor(total / piecesPerBar);
+              const remainingCuts = total % piecesPerBar;
+
+              // ตัดเป็นท่อนเต็มที่มีเศษเป็นศูนย์ของรายการนี้โดยตรงก่อน
+              for (let k = 0; k < fullBarsCount; k++) {
+                let barCuts = [];
+                for (let p = 0; p < piecesPerBar; p++) {
+                  barCuts.push({
+                    rowId: it.rowId,
+                    rowNo: it.rowNo,
+                    comp: it.comp,
+                    length: cutLen,
+                    isSpliceRem: false
+                  });
+                }
+                bars.push({
+                  isExactFull: true,
+                  rowId: it.rowId,
+                  rowNo: it.rowNo,
+                  originalLen: stdLen,
+                  remaining: 0,
+                  cuts: barCuts
+                });
+              }
+
+              // เหลือชิ้นงานเท่าไหร่ จึงนำไปดึงเศษจากรายการอื่น (ใช้แค่ไหนเอามาแค่นั้น)
+              for (let i = 0; i < remainingCuts; i++) {
+                cutsForPool.push({
+                  rowId: it.rowId,
+                  rowNo: it.rowNo,
+                  comp: it.comp,
+                  length: cutLen,
+                  isSpliceRem: false
+                });
+              }
+            } else {
+              for (let i = 0; i < total; i++) {
+                cutsForPool.push({
+                  rowId: it.rowId,
+                  rowNo: it.rowNo,
+                  comp: it.comp,
+                  length: cutLen,
+                  isSpliceRem: false
+                });
+              }
+            }
           }
         });
 
-        // 2. จัดสรรชิ้นงานตัดโดยใช้ความยาวสุทธิ (Nominal Fit)
-        cuts.forEach(c => {
+        // 2. จัดสรรชิ้นงานส่วนที่เหลือลงท่อนเหล็กตามขนาดจากยาวไปสั้น
+        cutsForPool.sort((a, b) => b.length - a.length);
+
+        cutsForPool.forEach(c => {
           let bestBar = null;
           let minRem = Infinity;
 
           for (let b of bars) {
-            if (b.isDedicatedFull) continue;
+            if (b.isDedicatedFull || b.isExactFull) continue;
             let currNominal = b.cuts.reduce((s, x) => s + x.length, 0);
 
             if (currNominal + c.length <= stdLen + 0.0001) {
@@ -745,86 +786,70 @@
           }
         });
 
+        // 3. วิเคราะห์สิทธิ์ความเป็นเจ้าของท่อนเหล็ก (Bar Ownership & Attribution)
+        let newBarsByRow = {};
+        let reuseByRow = {};
+        let passByRow = {};
+        let remByRow = {};
+
+        group.items.forEach(it => {
+          newBarsByRow[it.rowId] = 0;
+          reuseByRow[it.rowId] = {};
+          passByRow[it.rowId] = {};
+          remByRow[it.rowId] = [];
+        });
+
         bars.forEach(b => {
+          const ownerCut = b.cuts[0];
+          const ownerRowId = ownerCut.rowId;
+          const ownerRowNo = ownerCut.rowNo;
+
+          newBarsByRow[ownerRowId]++;
+
+          // จัดกลุ่มชิ้นงานในท่อนนี้
           let groupsInBar = [];
           b.cuts.forEach(c => {
             if (!groupsInBar.length || groupsInBar[groupsInBar.length - 1].rowNo !== c.rowNo) {
-              groupsInBar.push({ rowId: c.rowId, rowNo: c.rowNo, len: c.length, cuts: [c] });
+              groupsInBar.push({ rowId: c.rowId, rowNo: c.rowNo, len: c.length, qty: 1 });
             } else {
-              groupsInBar[groupsInBar.length - 1].cuts.push(c);
+              groupsInBar[groupsInBar.length - 1].qty++;
             }
           });
 
-          groupsInBar.forEach((g, idx) => {
-            const qty = g.cuts.length;
+          // ชิ้นงานที่ไม่ใช่เจ้าของท่อน จะดึงเศษมาจากเจ้าของท่อนโดยตรง
+          groupsInBar.forEach(g => {
+            if (g.rowId !== ownerRowId) {
+              const reuseKey = `${g.len.toFixed(2)}|${ownerRowNo}`;
+              reuseByRow[g.rowId][reuseKey] = (reuseByRow[g.rowId][reuseKey] || 0) + g.qty;
 
-            if (idx === 0) {
-              g.sourceType = 'new';
-              g.newBarsCount = 1;
-            } else {
-              const prevGroup = groupsInBar[idx - 1];
-              g.sourceType = 'reuse';
-              g.sourceFrom = prevGroup.rowNo;
-              g.sourceQty = qty;
-              g.sourceLen = g.len;
-            }
-
-            if (idx + 1 < groupsInBar.length) {
-              const nextGroup = groupsInBar[idx + 1];
-              g.hasPass = true;
-              g.passTo = nextGroup.rowNo;
-              g.passLen = nextGroup.len;
-              g.passQty = nextGroup.cuts.length;
-            } else {
-              g.isLastInBar = true;
-              g.finalRemainder = Math.max(0, b.remaining);
+              const passKey = `${g.len.toFixed(2)}|${g.rowNo}`;
+              passByRow[ownerRowId][passKey] = (passByRow[ownerRowId][passKey] || 0) + g.qty;
             }
           });
 
-          b.rowGroups = groupsInBar;
+          // เศษที่เหลือท้ายท่อนจะถูกบันทึกไว้ที่เจ้าของท่อนที่เบิกเส้นนั้นมา
+          remByRow[ownerRowId].push(b.remaining);
         });
 
+        // 4. สรุปผลลงตาราง Barcut
         group.items.forEach(it => {
           const tr = document.getElementById(it.rowId);
           if (!tr) return;
 
-          let newBarsTotal = fullBarsByRow[it.rowId] || 0;
-          let reuseMap = {};
-          let passMap = {};
-          let remList = [];
-          let rowScrapWeight = 0;
+          const newBarsCount = newBarsByRow[it.rowId] || 0;
+          const reuseMap = reuseByRow[it.rowId] || {};
+          const passMap = passByRow[it.rowId] || {};
+          const remList = remByRow[it.rowId] || [];
 
-          bars.forEach(b => {
-            if (b.isDedicatedFull) return;
-            (b.rowGroups || []).forEach(g => {
-              if (g.rowId === it.rowId) {
-                if (g.sourceType === 'new') {
-                  newBarsTotal += g.newBarsCount;
-                } else if (g.sourceType === 'reuse') {
-                  const key = `${g.sourceLen.toFixed(2)}|${g.sourceFrom}`;
-                  reuseMap[key] = (reuseMap[key] || 0) + g.sourceQty;
-                }
-
-                if (g.hasPass) {
-                  const passKey = `${g.passLen.toFixed(2)}|${g.passTo}`;
-                  passMap[passKey] = (passMap[passKey] || 0) + g.passQty;
-                }
-                if (g.isLastInBar) {
-                  remList.push(g.finalRemainder);
-                  rowScrapWeight += g.finalRemainder * group.weight;
-                }
-              }
-            });
-          });
-
-          // ปรับขนาดป้ายจำนวนเส้นให้พอดี สบายตา
-          if (newBarsTotal > 0) {
+          // ท่อนหลักเบิกใหม่
+          if (newBarsCount > 0) {
             let spliceBadge = spliceDetailByRow[it.rowId] ? `<span class="splice-note text-[9.5px] text-slate-500 font-normal block mt-0.5 leading-tight">(${spliceDetailByRow[it.rowId]})</span>` : '';
-            tr.querySelector('.row-bars-new').innerHTML = `<span class="bars-main-badge bg-cyan-50 text-cyan-800 px-2.5 py-0.5 rounded font-bold text-xs border border-cyan-300 inline-block shadow-xs">${newBarsTotal} เส้น</span>${spliceBadge}`;
+            tr.querySelector('.row-bars-new').innerHTML = `<span class="bars-main-badge bg-cyan-50 text-cyan-800 px-2.5 py-0.5 rounded font-bold text-xs border border-cyan-300 inline-block shadow-xs">${newBarsCount} เส้น</span>${spliceBadge}`;
           } else {
             tr.querySelector('.row-bars-new').innerText = '-';
           }
 
+          // ดึงเศษจาก No.
           let reuseParts = [];
           for (const [key, qty] of Object.entries(reuseMap)) {
             const [len, fromNo] = key.split('|');
@@ -832,6 +857,7 @@
           }
           tr.querySelector('.row-bars-reuse').innerHTML = reuseParts.length > 0 ? reuseParts.join('<br>') : '-';
 
+          // รายละเอียดเศษเหลือ (OFFCUT)
           let finalOffcuts = [];
           for (const [key, qty] of Object.entries(passMap)) {
             const [len, nextNo] = key.split('|');
@@ -839,6 +865,7 @@
           }
 
           let remCounts = {};
+          let rowScrapWeight = 0;
           remList.forEach(rem => {
             if (rem >= minScrapM) {
               const k = `เศษ ${rem.toFixed(2)} m|เก็บสต็อก`;
@@ -850,6 +877,7 @@
               const k = `ตัดหมดพอดี|`;
               remCounts[k] = (remCounts[k] || 0) + 1;
             }
+            rowScrapWeight += rem * group.weight;
           });
 
           for (const [k, cnt] of Object.entries(remCounts)) {
@@ -865,6 +893,7 @@
           tr.querySelector('.row-scrapg').innerText = rowScrapWeight > 0 ? rowScrapWeight.toFixed(2) : '-';
         });
 
+        // สรุปยอดรวมเข้าตาราง BOQ
         let totalUsedLen = group.items.reduce((s, it) => s + (it.cutLen * it.total), 0);
         let totalPurchasedLen = bars.length * stdLen;
         let totalPurchasedKg = totalPurchasedLen * group.weight;
@@ -891,7 +920,7 @@
         bars.forEach(b => {
           let cutsSig = b.cuts.map(c => `${c.rowNo}_${c.length.toFixed(3)}`).join('|');
           let remSig = b.remaining.toFixed(3);
-          let isFullSig = b.isDedicatedFull ? '1' : '0';
+          let isFullSig = (b.isDedicatedFull || b.isExactFull) ? '1' : '0';
           let patternKey = `${isFullSig}__${cutsSig}__${remSig}`;
 
           let lastGroup = groupedBars[groupedBars.length - 1];
@@ -924,7 +953,7 @@
 
           b.cuts.forEach(c => {
             let pct = (c.length / b.originalLen * 100).toFixed(2);
-            let isFull = b.isDedicatedFull;
+            let isFull = b.isDedicatedFull || b.isExactFull;
             let lenDisp = parseFloat(c.length.toFixed(2));
             
             let cutText = '';
@@ -947,7 +976,7 @@
           let remLabel = '';
           let remFullTitle = '';
 
-          if (b.isDedicatedFull) {
+          if (b.isDedicatedFull || b.isExactFull) {
             remLabel = '';
           } else if (rem > 0) {
             let typeText = isKeep ? 'สต็อก' : 'เศษ';
