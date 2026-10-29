@@ -60,7 +60,6 @@
       .col-action { display: none !important; }
       table, th, td { border-color: #94a3b8 !important; }
 
-      /* ปรับแต่งคอลัมน์ TYPE ให้ขยายและตัดข้อความได้ ไม่โดนตัดทอน */
       .col-profile-th, .col-profile-td, .row-profile {
         min-width: 240px !important;
         width: auto !important;
@@ -68,7 +67,6 @@
         word-break: break-word !important;
       }
 
-      /* ปรับแต่งป้ายจำนวนเส้นหลักให้เด่นชัด และข้อความต่อเหล็กเป็นตัวเล็กลง */
       .bars-main-badge {
         font-size: 14px !important;
         font-weight: 900 !important;
@@ -88,7 +86,6 @@
         line-height: 1.2 !important;
       }
 
-      /* ป้องกันไม่ให้แท่งแผนผังการตัดโดนผ่าครึ่งแผ่น */
       .cutting-bar-row {
         page-break-inside: avoid !important;
         break-inside: avoid !important;
@@ -167,7 +164,7 @@
           <span class="text-slate-600 font-bold">มม.</span>
         </div>
         <span class="text-xs text-emerald-800 bg-emerald-100 px-3 py-1.5 rounded border border-emerald-300 font-bold flex items-center gap-1">
-          <i class="fa-solid fa-calculator"></i> พิมพ์สูตรคำนวณได้ | กรอกยาวเกินสต็อก ระบบจะคำนวณต่อเหล็กให้อัตโนมัติ
+          <i class="fa-solid fa-calculator"></i> พิมพ์สูตรคำนวณได้ | นำเศษเหล็กหมุนเวียนใช้อัตโนมัติโดยไม่ตัดทอนด้วยใบตัด
         </span>
       </div>
 
@@ -195,7 +192,6 @@
             <tr class="border-b-2 border-slate-400">
               <th class="py-2.5 px-1 border-r border-slate-300 w-10 text-sm">#</th>
               <th class="py-2.5 px-2 border-r border-slate-300 w-36">COMPONENT<br><span class="text-[11px] text-slate-600 font-bold">ชื่อชิ้นงาน</span></th>
-              <!-- ปรับความกว้างคอลัมน์ TYPE เป็น min-w-[240px] เพื่อให้เห็นข้อความครบถ้วน -->
               <th class="py-2.5 px-2 border-r border-slate-300 w-64 min-w-[240px] bg-emerald-100 text-emerald-950 col-profile-th">TYPE / หน้าตัดเหล็กรูปพรรณ<br><span class="text-[11px] text-emerald-700 font-bold">(เหมือนกัน = ดึงเศษใช้ร่วมกัน)</span></th>
               <th class="py-2.5 px-1 border-r border-slate-300 w-24 bg-emerald-100 text-emerald-950">น.น. มาตรฐาน<br><span class="text-[11px] text-emerald-700 font-bold">(กก./ม.)</span></th>
               <th class="py-2.5 px-1 border-r border-slate-300 w-28 bg-blue-100 text-blue-950">พ.ท. ผิวรอบรูป<br><span class="text-[11px] text-blue-700 font-bold">(ตร.ม./ม.)</span></th>
@@ -259,7 +255,7 @@
         </div>
       </div>
       <h2 class="text-base font-black text-slate-800 flex items-center gap-2 border-b-2 pb-2 no-print"><i class="fa-solid fa-bars-staggered text-purple-600"></i> แผนผังการจัดตัดเหล็กทีละท่อน & การหมุนเวียนเศษ (Cutting Pattern)</h2>
-      <div id="cuttingDiagramContainer" class="space-y-2 w-full"></div>
+      <div id="cuttingDiagramContainer" class="space-y-1.5 w-full"></div>
     </div>
   </div>
 
@@ -290,6 +286,16 @@
   <script>
     let rowCount = 0;
     let autoCalcTimer = null;
+
+    function escapeHtmlAttr(str) {
+      if (str === null || str === undefined) return '';
+      return str.toString()
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
 
     function evaluateFormula(val) {
       if (val === null || val === undefined) return '';
@@ -398,6 +404,8 @@
       tr.dataset.rowid = rowCount;
       tr.className = "hover:bg-cyan-50/40 transition border-b border-slate-300";
 
+      const initComp = data ? data.comp : '';
+      const initProfile = data ? data.profile : '';
       const initWeight = data ? data.weight : '';
       const evalWeight = evaluateFormula(initWeight);
 
@@ -410,17 +418,16 @@
       tr.innerHTML = `
         <td class="py-2 px-1 border-r border-slate-300 font-mono font-black text-slate-700 text-sm row-idx">${tbody.children.length + 1}</td>
         <td class="py-1 px-1.5 border-r border-slate-300">
-          <input type="text" oninput="triggerAutoCalc()" value="${data ? data.comp : ''}" placeholder="เช่น เสา C-1" class="row-comp w-full border-2 border-slate-300 rounded px-2 py-1.5 font-bold text-slate-900 focus:border-cyan-600 outline-none">
+          <input type="text" oninput="triggerAutoCalc()" value="${escapeHtmlAttr(initComp)}" placeholder="เช่น เสา C-1" class="row-comp w-full border-2 border-slate-300 rounded px-2 py-1.5 font-bold text-slate-900 focus:border-cyan-600 outline-none">
         </td>
-        <!-- ช่อง TYPE ขยายความกว้างเต็มที่ ไม่โดนบีบคำ -->
         <td class="py-1 px-1.5 border-r border-slate-300 bg-emerald-50/50 min-w-[240px] col-profile-td">
-          <input type="text" oninput="triggerAutoCalc()" value="${data ? data.profile : ''}" placeholder="เช่น เหล็กกล่อง 100x50x3.2" class="row-profile w-full border-2 border-emerald-400 bg-white rounded px-2 py-1.5 font-black text-emerald-950 focus:border-emerald-600 outline-none text-xs">
+          <input type="text" oninput="triggerAutoCalc()" value="${escapeHtmlAttr(initProfile)}" placeholder="เช่น เหล็กกลม 4&quot;x หนา 4.5 มม." class="row-profile w-full border-2 border-emerald-400 bg-white rounded px-2 py-1.5 font-black text-emerald-950 focus:border-emerald-600 outline-none text-xs">
         </td>
         <td class="py-1 px-1 border-r border-slate-300 bg-emerald-50/50">
-          <input type="text" data-formula="${initWeight}" onfocus="handleFormulaFocus(this)" onblur="handleFormulaBlur(this, ${rowCount})" oninput="triggerAutoCalc()" value="${evalWeight}" placeholder="0.00" class="eval-formula row-weight w-full text-center border-2 border-emerald-300 bg-white rounded px-1 py-1.5 font-mono font-bold text-slate-900 focus:border-emerald-600 outline-none">
+          <input type="text" data-formula="${escapeHtmlAttr(initWeight)}" onfocus="handleFormulaFocus(this)" onblur="handleFormulaBlur(this, ${rowCount})" oninput="triggerAutoCalc()" value="${escapeHtmlAttr(evalWeight)}" placeholder="0.00" class="eval-formula row-weight w-full text-center border-2 border-emerald-300 bg-white rounded px-1 py-1.5 font-mono font-bold text-slate-900 focus:border-emerald-600 outline-none">
         </td>
         <td class="py-1 px-1 border-r border-slate-300 bg-blue-50/50">
-          <input type="text" data-formula="${initPaint}" onfocus="handleFormulaFocus(this)" onblur="handleFormulaBlur(this, ${rowCount})" oninput="triggerAutoCalc()" value="${evalPaint}" placeholder="เช่น (50+25)*2/1000" class="eval-formula row-paint-factor w-full text-center border-2 border-blue-300 bg-white rounded px-1 py-1.5 font-mono font-bold text-slate-900 focus:border-blue-600 outline-none">
+          <input type="text" data-formula="${escapeHtmlAttr(initPaint)}" onfocus="handleFormulaFocus(this)" onblur="handleFormulaBlur(this, ${rowCount})" oninput="triggerAutoCalc()" value="${escapeHtmlAttr(evalPaint)}" placeholder="เช่น (50+25)*2/1000" class="eval-formula row-paint-factor w-full text-center border-2 border-blue-300 bg-white rounded px-1 py-1.5 font-mono font-bold text-slate-900 focus:border-blue-600 outline-none">
         </td>
         <td class="py-1 px-1 border-r border-slate-300 bg-yellow-50/50 w-32 min-w-[130px]">
           <select onchange="triggerAutoCalc()" class="row-stock w-full border-2 border-amber-300 bg-white rounded px-2 py-1.5 text-xs font-black text-purple-900 outline-none">
@@ -436,11 +443,10 @@
         </td>
         <td class="py-1 px-1 border-r border-slate-300 bg-yellow-100 font-mono font-black text-amber-950 text-sm row-total">1</td>
         <td class="py-1 px-1 border-r border-slate-300 bg-cyan-50/50">
-          <input type="text" data-formula="${initCutLen}" onfocus="handleFormulaFocus(this)" onblur="handleFormulaBlur(this, ${rowCount})" oninput="triggerAutoCalc()" value="${evalCutLen}" placeholder="0.00 หรือสูตร" class="eval-formula row-cutlen w-full text-center border-2 border-cyan-400 rounded px-1 py-1.5 font-mono font-black text-cyan-950 text-sm focus:border-cyan-600 outline-none">
+          <input type="text" data-formula="${escapeHtmlAttr(initCutLen)}" onfocus="handleFormulaFocus(this)" onblur="handleFormulaBlur(this, ${rowCount})" oninput="triggerAutoCalc()" value="${escapeHtmlAttr(evalCutLen)}" placeholder="0.00 หรือสูตร" class="eval-formula row-cutlen w-full text-center border-2 border-cyan-400 rounded px-1 py-1.5 font-mono font-black text-cyan-950 text-sm focus:border-cyan-600 outline-none">
         </td>
         <td class="py-1 px-1 border-r border-slate-300 bg-amber-100 font-mono font-black text-amber-950 text-sm row-paint-total">-</td>
         
-        <!-- ช่องท่อนหลักเบิกใหม่ -->
         <td class="py-1 px-1.5 border-r border-slate-300 bg-cyan-50/70 font-black text-cyan-950 text-xs text-center row-bars-new">-</td>
         <td class="py-1 px-2 border-r border-slate-300 bg-emerald-50/70 font-bold text-emerald-950 text-xs text-left row-bars-reuse">-</td>
 
@@ -454,6 +460,14 @@
         </td>
       `;
       tbody.appendChild(tr);
+
+      // กำหนดค่าตรงผ่าน DOM เพื่อป้องกันเครื่องหมายคำพูด (") ในชื่อเหล็ก เช่น 4" ถูกตัดทอน
+      if (data) {
+        if (data.comp !== undefined) tr.querySelector('.row-comp').value = data.comp;
+        if (data.profile !== undefined) tr.querySelector('.row-profile').value = data.profile;
+        if (data.stock !== undefined) tr.querySelector('.row-stock').value = data.stock;
+      }
+
       updateRowNumbers();
       updateRowCalc(rowCount);
 
@@ -517,7 +531,7 @@
 
       addNewRow({
         comp: tr.querySelector('.row-comp').value + " (สำเนา)",
-        profile: tr.querySelector('.row-profile').value,
+        profile: tr.querySelector('.row-profile').value, // คัดลอกชื่อหน้าตัดเต็ม 100%
         weight: getFormulaOrVal('.row-weight'),
         paintFactor: getFormulaOrVal('.row-paint-factor'),
         stock: tr.querySelector('.row-stock').value,
@@ -544,10 +558,11 @@
       document.getElementById('cuttingDiagramContainer').innerHTML = '<p class="text-center p-6 text-slate-500 font-bold">กดคำนวณเพื่อแสดงแผนผังการตัด</p>';
     }
 
-    // ฟังก์ชันคำนวณตัดเหล็ก
+    // ฟังก์ชันคำนวณตัดเหล็ก: หมุนเวียนเศษโดยตรง ไม่ตัดทอนด้วย kerf เมื่อขนาดพอดีกับเศษ
     function calculateCutting(isSilent = false) {
       const kerfM = (parseFloat(document.getElementById('kerfInput').value) || 3) / 1000;
       const minScrapM = (parseFloat(document.getElementById('minScrapInput').value) || 500) / 1000;
+      const toleranceM = 0.010; 
       const rows = document.querySelectorAll('#barcutTbody tr');
 
       rows.forEach(r => {
@@ -682,7 +697,12 @@
             if (b.isDedicatedFull) continue;
             let spaceNeeded = c.length + (b.cuts.length > 0 ? kerfM : 0);
             
-            if (b.remaining >= spaceNeeded || (c.isSpliceRem && b.remaining >= c.length - 0.005)) {
+            // นำเศษมาใช้ได้โดยตรง ไม่ตัดทอนด้วย kerf หากขนาดพอดีหรือขาดไม่เกิน tolerance
+            let canFit = (b.remaining >= spaceNeeded) || 
+                         (b.remaining >= c.length - 0.005) || 
+                         ((b.remaining + toleranceM) >= spaceNeeded);
+
+            if (canFit) {
               let waste = Math.max(0, b.remaining - spaceNeeded);
               if (waste < minWaste) {
                 minWaste = waste;
@@ -702,6 +722,9 @@
 
           let spaceNeeded = c.length + (bestBar.cuts.length > 0 ? kerfM : 0);
           bestBar.remaining = Math.max(0, bestBar.remaining - spaceNeeded);
+          if (bestBar.remaining < 0.005) {
+            bestBar.remaining = 0;
+          }
           bestBar.cuts.push(c);
         });
 
@@ -781,7 +804,7 @@
             });
           });
 
-          // 2. แสดงจำนวนเส้นหลักให้เด่นชัด และข้อความต่อเหล็กเป็นตัวเล็กลง
+          // แสดงจำนวนเส้นหลักให้เด่นชัด และข้อความต่อเหล็กเป็นตัวเล็กลง
           if (newBarsTotal > 0) {
             let spliceBadge = spliceDetailByRow[it.rowId] ? `<span class="splice-note text-[10px] text-slate-500 font-semibold block mt-1">(${spliceDetailByRow[it.rowId]})</span>` : '';
             tr.querySelector('.row-bars-new').innerHTML = `<span class="bars-main-badge bg-cyan-100 text-cyan-950 px-3 py-1 rounded-md font-black text-sm border-2 border-cyan-400 inline-block shadow-xs">${newBarsTotal} เส้น</span>${spliceBadge}`;
@@ -850,7 +873,6 @@
           yieldPct: yieldPct
         };
 
-        // ไดอะแกรมแผนผังการตัด พร้อมระบบ page-break-inside: avoid ป้องกันการหั่นครึ่งเส้น
         diagramHtml += `
           <div class="border-2 border-slate-300 rounded-lg p-3 bg-slate-50 space-y-2 w-full">
             <div class="flex justify-between items-center font-black text-slate-900 text-sm border-b-2 border-slate-200 pb-1.5">
@@ -893,7 +915,6 @@
             `;
           }
 
-          // คลาส cutting-bar-row ป้องกันไม่ให้เส้นนี้โดนตัดขาดข้ามหน้ากระดาษ
           diagramHtml += `
             <div class="cutting-bar-row flex items-center gap-2 w-full">
               <span class="w-16 font-mono text-xs text-slate-700 font-black shrink-0">เส้น #${b.barIndex}</span>
@@ -1302,6 +1323,15 @@
       const file = e.target.files[0];
       if (!file) return;
 
+      const stripCsvQuote = (str) => {
+        if (!str) return '';
+        let s = str.trim();
+        if (s.startsWith('"') && s.endsWith('"')) {
+          s = s.substring(1, s.length - 1).replace(/""/g, '"');
+        }
+        return s;
+      };
+
       const reader = new FileReader();
       reader.onload = function(evt) {
         const text = evt.target.result;
@@ -1313,8 +1343,8 @@
             const cols = lines[i].split(',');
             if (cols.length >= 8) {
               addNewRow({
-                comp: cols[1]?.replace(/"/g, '') || '',
-                profile: cols[2]?.replace(/"/g, '') || '',
+                comp: stripCsvQuote(cols[1]),
+                profile: stripCsvQuote(cols[2]),
                 weight: cols[3] || '',
                 paintFactor: cols[4] || '',
                 stock: cols[5] || '6.0',
