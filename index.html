@@ -14,7 +14,7 @@
     input[type=number]::-webkit-inner-spin-button, 
     input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
 
-    /* การตั้งค่าสำหรับการพิมพ์เอกสาร (Print Layout) */
+    /* การตั้งค่าสำหรับการพิมพ์เอกสาร (Print Layout) ให้พิมพ์ครบทุกชีท */
     @media print {
       @page {
         size: landscape;
@@ -28,6 +28,21 @@
       .no-print {
         display: none !important;
       }
+      /* บังคับให้แสดงทุกชีทออกมาทั้งหมดตอนพิมพ์ */
+      #tab-barcut, #tab-boq, #tab-cuttingSheet {
+        display: block !important;
+      }
+      /* ขึ้นหน้าใหม่สำหรับชีท BOQ และชีทแผนผังการตัด */
+      #tab-boq {
+        page-break-before: always !important;
+        break-before: page !important;
+        padding-top: 5mm !important;
+      }
+      #tab-cuttingSheet {
+        page-break-before: always !important;
+        break-before: page !important;
+        padding-top: 5mm !important;
+      }
       thead {
         display: table-header-group !important;
       }
@@ -36,6 +51,9 @@
       }
       .print-header-row {
         display: table-row !important;
+      }
+      .print-sheet-header {
+        display: block !important;
       }
       input, select {
         border: none !important;
@@ -49,6 +67,8 @@
         appearance: none !important;
         -webkit-appearance: none !important;
         text-align: inherit !important;
+        white-space: nowrap !important;
+        overflow: visible !important;
       }
       input::placeholder {
         color: transparent !important;
@@ -94,7 +114,7 @@
         </div>
       </div>
 
-      <!-- แถวที่ 2: แถบปุ่มฟังก์ชันหลัก -->
+      <!-- แถวที่ 2: แถบปุ่มฟังก์ชันหลักตามรูปภาพ -->
       <div class="flex flex-wrap items-center gap-2 pt-1 no-print">
         <button onclick="saveProjectToStorage()" class="bg-[#00897b] hover:bg-teal-700 text-white px-3.5 py-1.5 rounded-md flex items-center gap-2 font-bold shadow transition transform active:scale-95 text-xs">
           <i class="fa-solid fa-floppy-disk"></i> บันทึกงานลงคลัง
@@ -179,32 +199,36 @@
           <thead class="bg-slate-200 text-slate-900 border-b-2 border-slate-400 font-black">
             
             <tr class="hidden print-header-row bg-white text-black border-b-2 border-slate-800">
-              <th colspan="14" class="py-2.5 px-3 text-left bg-white border-none">
+              <th colspan="15" class="py-2.5 px-3 text-left bg-white border-none">
                 <div class="flex justify-between items-center text-xs font-black text-black">
-                  <span class="text-sm">🏗️ <b>ระบบคำนวณสั่งตัดเหล็กรูปพรรณ (CutSteel System)</b></span>
-                  <span><b>ชื่อโครงการ:</b> <span id="printProjName" class="underline text-black">-</span></span>
-                  <span><b>หมวดหมู่งาน:</b> <span id="printJobCategory" class="underline text-black">-</span></span>
-                  <span class="text-[10px] text-slate-600">วันที่พิมพ์: <span id="printDate"></span></span>
+                  <span class="text-sm">🏗️ <b>ระบบคำนวณสั่งตัดเหล็กรูปพรรณ (CutSteel System) - ตาราง Barcut</b></span>
+                  <span><b>ชื่อโครงการ:</b> <span class="printProjNameRef underline text-black">-</span></span>
+                  <span><b>หมวดหมู่งาน:</b> <span class="printJobCatRef underline text-black">-</span></span>
+                  <span class="text-[10px] text-slate-600">วันที่พิมพ์: <span class="printDateRef"></span></span>
                 </div>
               </th>
             </tr>
 
             <tr class="border-b-2 border-slate-400">
               <th class="py-2.5 px-1 border-r border-slate-300 w-10 text-sm">#</th>
-              <th class="py-2.5 px-2 border-r border-slate-300 w-44">COMPONENT<br><span class="text-[11px] text-slate-600 font-bold">ชื่อชิ้นงาน</span></th>
-              <th class="py-2.5 px-2 border-r border-slate-300 w-52 bg-emerald-100 text-emerald-950">TYPE / หน้าตัดเหล็กรูปพรรณ<br><span class="text-[11px] text-emerald-700 font-bold">(เหมือนกัน = ดึงเศษใช้ร่วมกัน)</span></th>
-              <th class="py-2.5 px-1 border-r border-slate-300 w-28 bg-emerald-100 text-emerald-950">น.น. มาตรฐาน<br><span class="text-[11px] text-emerald-700 font-bold">(กก./ม.)</span></th>
-              <th class="py-2.5 px-1 border-r border-slate-300 w-32 bg-blue-100 text-blue-950">พ.ท. ผิวรอบรูป<br><span class="text-[11px] text-blue-700 font-bold">(ตร.ม./ม.)</span></th>
-              <th class="py-2.5 px-2 border-r border-slate-300 bg-yellow-100 text-amber-950 w-28">ความยาวสต็อก<br><span class="text-[11px] text-amber-700 font-bold">6.0ม. / 12.0ม.</span></th>
-              <th class="py-2.5 px-1 border-r border-slate-300 bg-yellow-100 text-amber-950 w-14">ชุด<br><span class="text-[11px] text-amber-700 font-bold">SET</span></th>
-              <th class="py-2.5 px-1 border-r border-slate-300 bg-yellow-100 text-amber-950 w-14">ต่อชุด<br><span class="text-[11px] text-amber-700 font-bold">QTY</span></th>
-              <th class="py-2.5 px-1 border-r border-slate-300 bg-yellow-200 text-amber-950 font-black w-14">รวมชิ้น<br><span class="text-[11px] text-amber-800 font-bold">TOTAL</span></th>
-              <th class="py-2.5 px-2 border-r border-slate-300 bg-cyan-100 text-cyan-950 font-black w-32">ยาวตัด/ชิ้น (ม.)<br><span class="text-[11px] text-cyan-700 font-bold">CUT LENGTH</span></th>
-              <th class="py-2.5 px-2 border-r border-slate-300 bg-amber-200 text-amber-950 font-black w-28">พ.ท. ทาสีรวม<br><span class="text-[11px] text-amber-800 font-bold">(ตร.ม.)</span></th>
-              <th class="py-2.5 px-2 border-r border-slate-300 bg-emerald-200 text-emerald-950 font-black w-48">ท่อนหลัก (BARS)<br><span class="text-[11px] text-emerald-800 font-bold">เส้นใหม่ / ดึงเศษจาก No.</span></th>
-              <th class="py-2.5 px-2 border-r border-slate-300 bg-rose-100 text-rose-950 font-black w-60">รายละเอียดเศษเหลือ (OFFCUT)<br><span class="text-[11px] text-rose-700 font-bold">นำไปใช้ต่อใน No. / เก็บสต็อก</span></th>
-              <th class="py-2.5 px-2 border-r border-slate-300 bg-rose-200 text-rose-950 font-black w-24">น.น. เศษ<br><span class="text-[11px] text-rose-800 font-bold">(กก.)</span></th>
-              <th class="py-2.5 px-2 w-20 text-slate-800 font-black col-action">จัดการ</th>
+              <th class="py-2.5 px-2 border-r border-slate-300 w-40">COMPONENT<br><span class="text-[11px] text-slate-600 font-bold">ชื่อชิ้นงาน</span></th>
+              <th class="py-2.5 px-2 border-r border-slate-300 w-48 bg-emerald-100 text-emerald-950">TYPE / หน้าตัดเหล็กรูปพรรณ<br><span class="text-[11px] text-emerald-700 font-bold">(เหมือนกัน = ดึงเศษใช้ร่วมกัน)</span></th>
+              <th class="py-2.5 px-1 border-r border-slate-300 w-24 bg-emerald-100 text-emerald-950">น.น. มาตรฐาน<br><span class="text-[11px] text-emerald-700 font-bold">(กก./ม.)</span></th>
+              <th class="py-2.5 px-1 border-r border-slate-300 w-28 bg-blue-100 text-blue-950">พ.ท. ผิวรอบรูป<br><span class="text-[11px] text-blue-700 font-bold">(ตร.ม./ม.)</span></th>
+              <th class="py-2.5 px-2 border-r border-slate-300 bg-yellow-100 text-amber-950 w-32 min-w-[130px]">ความยาวสต็อก<br><span class="text-[11px] text-amber-700 font-bold">6.0ม. / 12.0ม.</span></th>
+              <th class="py-2.5 px-1 border-r border-slate-300 bg-yellow-100 text-amber-950 w-12">ชุด<br><span class="text-[11px] text-amber-700 font-bold">SET</span></th>
+              <th class="py-2.5 px-1 border-r border-slate-300 bg-yellow-100 text-amber-950 w-12">ต่อชุด<br><span class="text-[11px] text-amber-700 font-bold">QTY</span></th>
+              <th class="py-2.5 px-1 border-r border-slate-300 bg-yellow-200 text-amber-950 font-black w-12">รวมชิ้น<br><span class="text-[11px] text-amber-800 font-bold">TOTAL</span></th>
+              <th class="py-2.5 px-2 border-r border-slate-300 bg-cyan-100 text-cyan-950 font-black w-28">ยาวตัด/ชิ้น (ม.)<br><span class="text-[11px] text-cyan-700 font-bold">CUT LENGTH</span></th>
+              <th class="py-2.5 px-2 border-r border-slate-300 bg-amber-200 text-amber-950 font-black w-24">พ.ท. ทาสีรวม<br><span class="text-[11px] text-amber-800 font-bold">(ตร.ม.)</span></th>
+              
+              <!-- แยก 2 ช่อง: 1. ท่อนหลักเบิกเส้นใหม่  2. ดึงเศษจาก No. -->
+              <th class="py-2.5 px-2 border-r border-slate-300 bg-cyan-200 text-cyan-950 font-black w-28">ท่อนหลัก (BARS)<br><span class="text-[11px] text-cyan-800 font-bold">เบิกเส้นใหม่</span></th>
+              <th class="py-2.5 px-2 border-r border-slate-300 bg-emerald-200 text-emerald-950 font-black w-48">ดึงเศษจาก No.<br><span class="text-[11px] text-emerald-800 font-bold">นำเศษมาใช้</span></th>
+
+              <th class="py-2.5 px-2 border-r border-slate-300 bg-rose-100 text-rose-950 font-black w-56">รายละเอียดเศษเหลือ (OFFCUT)<br><span class="text-[11px] text-rose-700 font-bold">นำไปใช้ต่อใน No. / เก็บสต็อก</span></th>
+              <th class="py-2.5 px-2 border-r border-slate-300 bg-rose-200 text-rose-950 font-black w-20">น.น. เศษ<br><span class="text-[11px] text-rose-800 font-bold">(กก.)</span></th>
+              <th class="py-2.5 px-2 w-16 text-slate-800 font-black col-action">จัดการ</th>
             </tr>
           </thead>
           <tbody id="barcutTbody" class="divide-y-2 divide-slate-200"></tbody>
@@ -214,7 +238,18 @@
 
     <!-- 2. ตาราง BOQ -->
     <div id="tab-boq" class="hidden bg-white p-5 rounded-lg border-2 border-slate-300 shadow space-y-4">
-      <h2 class="text-base font-black text-slate-800 flex items-center gap-2 border-b-2 pb-2">
+      
+      <!-- หัวกระดาษพิมพ์สำหรับชีท BOQ -->
+      <div class="hidden print-sheet-header mb-3 border-b-2 border-slate-800 pb-2">
+        <div class="flex justify-between items-center text-xs font-black text-black">
+          <span class="text-sm">🏗️ <b>สรุปรายการสั่งซื้อเหล็ก และพื้นที่ทาสีโครงการ (BOQ Summary)</b></span>
+          <span><b>ชื่อโครงการ:</b> <span class="printProjNameRef underline text-black">-</span></span>
+          <span><b>หมวดหมู่งาน:</b> <span class="printJobCatRef underline text-black">-</span></span>
+          <span class="text-[10px] text-slate-600">วันที่พิมพ์: <span class="printDateRef"></span></span>
+        </div>
+      </div>
+
+      <h2 class="text-base font-black text-slate-800 flex items-center gap-2 border-b-2 pb-2 no-print">
         <i class="fa-solid fa-file-invoice text-cyan-600"></i> สรุปรายการสั่งซื้อเหล็ก และพื้นที่ทาสีโครงการ (BOQ Summary)
       </h2>
       <div class="overflow-x-auto">
@@ -239,7 +274,18 @@
 
     <!-- 3. แผนผังการตัด -->
     <div id="tab-cuttingSheet" class="hidden bg-white p-5 rounded-lg border-2 border-slate-300 shadow space-y-4">
-      <h2 class="text-base font-black text-slate-800 flex items-center gap-2 border-b-2 pb-2">
+      
+      <!-- หัวกระดาษพิมพ์สำหรับชีท แผนผังการตัด -->
+      <div class="hidden print-sheet-header mb-3 border-b-2 border-slate-800 pb-2">
+        <div class="flex justify-between items-center text-xs font-black text-black">
+          <span class="text-sm">🏗️ <b>แผนผังการจัดตัดเหล็กทีละท่อน & การหมุนเวียนเศษ (Cutting Pattern)</b></span>
+          <span><b>ชื่อโครงการ:</b> <span class="printProjNameRef underline text-black">-</span></span>
+          <span><b>หมวดหมู่งาน:</b> <span class="printJobCatRef underline text-black">-</span></span>
+          <span class="text-[10px] text-slate-600">วันที่พิมพ์: <span class="printDateRef"></span></span>
+        </div>
+      </div>
+
+      <h2 class="text-base font-black text-slate-800 flex items-center gap-2 border-b-2 pb-2 no-print">
         <i class="fa-solid fa-bars-staggered text-purple-600"></i> แผนผังการจัดตัดเหล็กทีละท่อน & การหมุนเวียนเศษ (Cutting Pattern)
       </h2>
       <div id="cuttingDiagramContainer" class="space-y-4"></div>
@@ -289,11 +335,17 @@
     function syncPrintInfo() {
       const pName = document.getElementById('projName').value.trim() || 'ไม่ได้ระบุชื่อโครงการ';
       const jCat = document.getElementById('jobCategory').value.trim() || 'ไม่ได้ระบุหมวดหมู่งาน';
-      document.getElementById('printProjName').innerText = pName;
-      document.getElementById('printJobCategory').innerText = jCat;
-      document.getElementById('printDate').innerText = new Date().toLocaleDateString('th-TH');
+      const dNow = new Date().toLocaleDateString('th-TH');
+
+      document.querySelectorAll('.printProjNameRef').forEach(el => el.innerText = pName);
+      document.querySelectorAll('.printJobCatRef').forEach(el => el.innerText = jCat);
+      document.querySelectorAll('.printDateRef').forEach(el => el.innerText = dNow);
     }
-    window.onbeforeprint = syncPrintInfo;
+
+    window.onbeforeprint = function() {
+      syncPrintInfo();
+      calculateCutting(true);
+    };
 
     window.onload = function() {
       addNewRow();
@@ -365,8 +417,8 @@
         <td class="py-1 px-1 border-r border-slate-300 bg-blue-50/50">
           <input type="text" onblur="handleFormulaBlur(this, ${rowCount})" oninput="triggerAutoCalc()" value="${data ? data.paintFactor : ''}" placeholder="เช่น (50+25)*2/1000" class="eval-formula row-paint-factor w-full text-center border-2 border-blue-300 bg-white rounded px-1 py-1.5 font-mono font-bold text-slate-900 focus:border-blue-600 outline-none">
         </td>
-        <td class="py-1 px-1 border-r border-slate-300 bg-yellow-50/50">
-          <select onchange="triggerAutoCalc()" class="row-stock w-full border-2 border-amber-300 bg-white rounded px-1 py-1.5 text-xs font-bold text-purple-900 outline-none">
+        <td class="py-1 px-1 border-r border-slate-300 bg-yellow-50/50 w-32 min-w-[130px]">
+          <select onchange="triggerAutoCalc()" class="row-stock w-full border-2 border-amber-300 bg-white rounded px-2 py-1.5 text-xs font-black text-purple-900 outline-none">
             <option value="6.0" selected>🔒 6.0 เมตร</option>
             <option value="12.0">🔒 12.0 เมตร</option>
           </select>
@@ -382,7 +434,12 @@
           <input type="text" onblur="handleFormulaBlur(this, ${rowCount})" oninput="triggerAutoCalc()" value="${data ? data.cutLen : ''}" placeholder="0.00 หรือสูตร" class="eval-formula row-cutlen w-full text-center border-2 border-cyan-400 rounded px-1 py-1.5 font-mono font-black text-cyan-950 text-sm focus:border-cyan-600 outline-none">
         </td>
         <td class="py-1 px-1 border-r border-slate-300 bg-amber-100 font-mono font-black text-amber-950 text-sm row-paint-total">-</td>
-        <td class="py-1 px-1.5 border-r border-slate-300 bg-emerald-100/70 font-black text-emerald-950 text-xs row-bars">-</td>
+        
+        <!-- 1. ท่อนหลัก (BARS) เบิกเส้นใหม่ -->
+        <td class="py-1 px-1.5 border-r border-slate-300 bg-cyan-50/70 font-black text-cyan-950 text-xs text-center row-bars-new">-</td>
+        <!-- 2. ดึงเศษจาก No. -->
+        <td class="py-1 px-2 border-r border-slate-300 bg-emerald-50/70 font-bold text-emerald-950 text-xs text-left row-bars-reuse">-</td>
+
         <td class="py-1 px-2 border-r border-slate-300 bg-rose-50 text-xs font-bold text-rose-950 text-left row-offcut">-</td>
         <td class="py-1 px-1 border-r border-slate-300 bg-rose-100 font-mono font-black text-rose-950 text-sm row-scrapg">-</td>
         <td class="py-1 px-1 col-action">
@@ -473,20 +530,21 @@
     }
 
     function clearCalculations() {
-      document.querySelectorAll('.row-bars, .row-offcut, .row-scrapg').forEach(td => td.innerText = '-');
+      document.querySelectorAll('.row-bars-new, .row-bars-reuse, .row-offcut, .row-scrapg').forEach(td => td.innerText = '-');
       document.getElementById('boqTbody').innerHTML = '<tr><td colspan="8" class="text-center p-6 text-slate-500 font-bold">กดคำนวณเพื่อแสดงข้อมูล BOQ</td></tr>';
       document.getElementById('boqTfoot').innerHTML = '';
       document.getElementById('cuttingDiagramContainer').innerHTML = '<p class="text-center p-6 text-slate-500 font-bold">กดคำนวณเพื่อแสดงแผนผังการตัด</p>';
     }
 
-    // ฟังก์ชันคำนวณหลัก พร้อมจัดกลุ่มท่อนและนับจำนวนท่อนรวม (ทั้ง BARS และ OFFCUT)
+    // ฟังก์ชันคำนวณตัดเหล็กและจัดกลุ่มลง 2 ช่องชัดเจน
     function calculateCutting(isSilent = false) {
       const kerfM = (parseFloat(document.getElementById('kerfInput').value) || 3) / 1000;
       const minScrapM = (parseFloat(document.getElementById('minScrapInput').value) || 500) / 1000;
       const rows = document.querySelectorAll('#barcutTbody tr');
 
       rows.forEach(r => {
-        r.querySelector('.row-bars').innerText = '-';
+        r.querySelector('.row-bars-new').innerText = '-';
+        r.querySelector('.row-bars-reuse').innerText = '-';
         r.querySelector('.row-offcut').innerText = '-';
         r.querySelector('.row-scrapg').innerText = '-';
       });
@@ -545,7 +603,7 @@
           }
         });
 
-        // จัดเรียงยาวไปสั้น
+        // จัดเรียงชิ้นงานยาวไปสั้น
         cuts.sort((a, b) => b.length - a.length);
 
         let bars = [];
@@ -582,110 +640,127 @@
           bestBar.cuts.push(c);
         });
 
+        // จัดกลุ่มชิ้นงานในท่อนเดียวกันที่มาจากแถวเดียวกัน (Group consecutive cuts by row)
         bars.forEach(b => {
-          for (let i = 0; i < b.cuts.length; i++) {
-            const currentCut = b.cuts[i];
-            if (i === 0) {
-              currentCut.sourceType = 'new';
+          let groupsInBar = [];
+          b.cuts.forEach(c => {
+            if (!groupsInBar.length || groupsInBar[groupsInBar.length - 1].rowNo !== c.rowNo) {
+              groupsInBar.push({ rowId: c.rowId, rowNo: c.rowNo, len: c.length, cuts: [c] });
             } else {
-              currentCut.sourceType = 'reuse';
-              currentCut.sourceFrom = b.cuts[i - 1].rowNo;
-            }
-
-            if (i + 1 < b.cuts.length) {
-              currentCut.passTo = b.cuts[i + 1].rowNo;
-              currentCut.passedLength = b.cuts[i + 1].length;
-            } else {
-              currentCut.isLastInBar = true;
-              currentCut.finalRemainder = Math.max(0, b.remaining);
-            }
-          }
-        });
-
-        group.items.forEach(it => {
-          const rowCuts = cuts.filter(c => c.rowId === it.rowId);
-          const tr = document.getElementById(it.rowId);
-          if (!tr || rowCuts.length === 0) return;
-
-          // สรุปช่อง ท่อนหลัก (BARS) แบบรวมจำนวนท่อน
-          let barParts = [];
-          const newCount = rowCuts.filter(c => c.sourceType === 'new').length;
-          if (newCount > 0) {
-            barParts.push(`เหล็กใหม่ ${newCount} เส้น`);
-          }
-
-          const reuseCuts = rowCuts.filter(c => c.sourceType === 'reuse');
-          if (reuseCuts.length > 0) {
-            let reuseMap = {};
-            reuseCuts.forEach(c => {
-              const key = `${c.length.toFixed(2)}|${c.sourceFrom}`;
-              reuseMap[key] = (reuseMap[key] || 0) + 1;
-            });
-            for (const [key, cnt] of Object.entries(reuseMap)) {
-              const [len, fromNo] = key.split('|');
-              barParts.push(`นำเศษ ${len} m ${cnt} ท่อน จาก No.${fromNo}`);
-            }
-          }
-          tr.querySelector('.row-bars').innerHTML = `<span class="text-emerald-950 font-black">${barParts.join(' + ') || '-'}</span>`;
-
-          // สรุปช่อง รายละเอียดเศษเหลือ (OFFCUT) แบบรวมจำนวนท่อน
-          let offcutMap = {};
-          let rowScrapWeight = 0;
-
-          rowCuts.forEach(c => {
-            if (c.passTo) {
-              const key = `pass|${c.passedLength.toFixed(2)}|${c.passTo}`;
-              if (!offcutMap[key]) {
-                offcutMap[key] = {
-                  type: 'pass',
-                  length: c.passedLength.toFixed(2),
-                  target: c.passTo,
-                  count: 0
-                };
-              }
-              offcutMap[key].count++;
-            } else if (c.isLastInBar) {
-              const rem = c.finalRemainder;
-              if (rem >= minScrapM) {
-                const key = `keep|${rem.toFixed(2)}`;
-                if (!offcutMap[key]) {
-                  offcutMap[key] = { type: 'keep', length: rem.toFixed(2), count: 0 };
-                }
-                offcutMap[key].count++;
-              } else if (rem > 0.05) {
-                const key = `waste|${rem.toFixed(2)}`;
-                if (!offcutMap[key]) {
-                  offcutMap[key] = { type: 'waste', length: rem.toFixed(2), count: 0 };
-                }
-                offcutMap[key].count++;
-              } else {
-                const key = `exact`;
-                if (!offcutMap[key]) {
-                  offcutMap[key] = { type: 'exact', count: 0 };
-                }
-                offcutMap[key].count++;
-              }
-              rowScrapWeight += rem * group.weight;
+              groupsInBar[groupsInBar.length - 1].cuts.push(c);
             }
           });
 
-          let offcutParts = [];
-          for (const item of Object.values(offcutMap)) {
-            if (item.type === 'pass') {
-              offcutParts.push(`เศษ ${item.length} m ${item.count} ท่อน (นำไปใช้ใน No.${item.target})`);
-            } else if (item.type === 'keep') {
-              offcutParts.push(`เศษ ${item.length} m ${item.count} ท่อน (เก็บสต็อก)`);
-            } else if (item.type === 'waste') {
-              offcutParts.push(`เศษ ${item.length} m ${item.count} ท่อน (เศษทิ้ง)`);
-            } else if (item.type === 'exact') {
-              offcutParts.push(item.count > 1 ? `ตัดหมดพอดี (${item.count} ท่อน)` : `ตัดหมดพอดี`);
+          // วิเคราะห์ที่มา และการส่งต่อเศษ
+          groupsInBar.forEach((g, idx) => {
+            const qty = g.cuts.length;
+
+            if (idx === 0) {
+              g.sourceType = 'new';
+              g.newBarsCount = 1;
+            } else {
+              const prevGroup = groupsInBar[idx - 1];
+              g.sourceType = 'reuse';
+              g.sourceFrom = prevGroup.rowNo;
+              g.sourceQty = qty;
+              g.sourceLen = g.len;
+            }
+
+            if (idx + 1 < groupsInBar.length) {
+              const nextGroup = groupsInBar[idx + 1];
+              g.hasPass = true;
+              g.passTo = nextGroup.rowNo;
+            } else {
+              g.isLastInBar = true;
+              g.finalRemainder = Math.max(0, b.remaining);
+            }
+          });
+
+          b.rowGroups = groupsInBar;
+        });
+
+        // สรุปข้อมูลลงแต่ละแถวรายการ
+        group.items.forEach(it => {
+          const tr = document.getElementById(it.rowId);
+          if (!tr) return;
+
+          let newBarsTotal = 0;
+          let reuseMap = {}; // "len|fromRow" -> total pieces
+
+          let passMap = {}; // "nextRow" -> count of bars passed
+          let remList = [];
+          let rowScrapWeight = 0;
+
+          bars.forEach(b => {
+            (b.rowGroups || []).forEach(g => {
+              if (g.rowId === it.rowId) {
+                if (g.sourceType === 'new') {
+                  newBarsTotal += g.newBarsCount;
+                } else if (g.sourceType === 'reuse') {
+                  const key = `${g.sourceLen.toFixed(2)}|${g.sourceFrom}`;
+                  reuseMap[key] = (reuseMap[key] || 0) + g.sourceQty;
+                }
+
+                if (g.hasPass) {
+                  passMap[g.passTo] = (passMap[g.passTo] || 0) + 1;
+                }
+                if (g.isLastInBar) {
+                  remList.push(g.finalRemainder);
+                  rowScrapWeight += g.finalRemainder * group.weight;
+                }
+              }
+            });
+          });
+
+          // 1. ช่อง ท่อนหลัก (BARS) เบิกเส้นใหม่
+          if (newBarsTotal > 0) {
+            tr.querySelector('.row-bars-new').innerHTML = `<span class="bg-cyan-100 text-cyan-950 px-2 py-0.5 rounded font-black border border-cyan-300">${newBarsTotal} เส้น</span>`;
+          } else {
+            tr.querySelector('.row-bars-new').innerText = '-';
+          }
+
+          // 2. ช่อง ดึงเศษจาก No.
+          let reuseParts = [];
+          for (const [key, qty] of Object.entries(reuseMap)) {
+            const [len, fromNo] = key.split('|');
+            reuseParts.push(`นำเศษ ${len} m ${qty} ท่อน จาก No.${fromNo}`);
+          }
+          tr.querySelector('.row-bars-reuse').innerHTML = reuseParts.length > 0 ? reuseParts.join('<br>') : '-';
+
+          // 3. ช่อง รายละเอียดเศษเหลือ (OFFCUT)
+          let finalOffcuts = [];
+          for (const [nextNo, count] of Object.entries(passMap)) {
+            finalOffcuts.push(`ส่งต่อเศษ ${count} ท่อน (นำไปใช้ใน No.${nextNo})`);
+          }
+
+          let remCounts = {};
+          remList.forEach(rem => {
+            if (rem >= minScrapM) {
+              const k = `เศษ ${rem.toFixed(2)} m|เก็บสต็อก`;
+              remCounts[k] = (remCounts[k] || 0) + 1;
+            } else if (rem > 0.05) {
+              const k = `เศษ ${rem.toFixed(2)} m|เศษทิ้ง`;
+              remCounts[k] = (remCounts[k] || 0) + 1;
+            } else {
+              const k = `ตัดหมดพอดี|`;
+              remCounts[k] = (remCounts[k] || 0) + 1;
+            }
+          });
+
+          for (const [k, cnt] of Object.entries(remCounts)) {
+            const [label, status] = k.split('|');
+            if (status) {
+              finalOffcuts.push(cnt > 1 ? `${label} ${cnt} ท่อน (${status})` : `${label} 1 ท่อน (${status})`);
+            } else {
+              finalOffcuts.push(cnt > 1 ? `${label} (${cnt} ท่อน)` : label);
             }
           }
 
-          tr.querySelector('.row-offcut').innerHTML = offcutParts.join('<br>') || '-';
+          tr.querySelector('.row-offcut').innerHTML = finalOffcuts.join('<br>') || '-';
           tr.querySelector('.row-scrapg').innerText = rowScrapWeight > 0 ? rowScrapWeight.toFixed(2) : '-';
         });
 
+        // สรุปยอดเข้าตาราง BOQ
         let totalUsedLen = cuts.reduce((s, c) => s + c.length, 0);
         let totalPurchasedLen = bars.length * stdLen;
         let totalPurchasedKg = totalPurchasedLen * group.weight;
@@ -707,6 +782,7 @@
           yieldPct: yieldPct
         };
 
+        // ไดอะแกรมแผนผังการตัด
         diagramHtml += `
           <div class="border-2 border-slate-300 rounded-lg p-3.5 bg-slate-50 space-y-2">
             <div class="flex justify-between items-center font-black text-slate-900 text-sm border-b-2 border-slate-200 pb-1.5">
@@ -854,6 +930,7 @@
       }
     }
 
+    // ฟังก์ชันส่งออก Excel ที่รองรับ 2 ช่องแยกใหม่
     function exportToCSV() {
       calculateCutting(true);
 
@@ -865,7 +942,7 @@
       csv += `โครงการ:,"${projName}",หมวดหมู่งาน:,"${jobCategory}",วันที่ออกรายงาน:,"${new Date().toLocaleDateString('th-TH')}"\n\n`;
 
       csv += `[ตารางที่ 1: ตาราง Barcut คำนวณตัดเหล็กรูปพรรณ]\n`;
-      csv += "ลำดับ,ชื่อชิ้นงาน (COMPONENT),หน้าตัดเหล็ก (TYPE),นน.ต่อเมตร (กก./ม.),พท.ผิวรอบรูป (ตร.ม./ม.),ความยาวสต็อก,ชุด,ต่อชุด,รวมชิ้น,ยาวตัดต่อชิ้น (ม.),พท.ทาสีรวม (ตร.ม.),ท่อนหลัก (BARS),รายละเอียดเศษเหลือ (OFFCUT),นน.เศษ (กก.)\n";
+      csv += "ลำดับ,ชื่อชิ้นงาน (COMPONENT),หน้าตัดเหล็ก (TYPE),นน.ต่อเมตร (กก./ม.),พท.ผิวรอบรูป (ตร.ม./ม.),ความยาวสต็อก,ชุด,ต่อชุด,รวมชิ้น,ยาวตัดต่อชิ้น (ม.),พท.ทาสีรวม (ตร.ม.),ท่อนหลักเบิกใหม่ (เส้น),ดึงเศษจาก No.,รายละเอียดเศษเหลือ (OFFCUT),นน.เศษ (กก.)\n";
       
       const rows = document.querySelectorAll('#barcutTbody tr');
       rows.forEach((r, i) => {
@@ -879,11 +956,13 @@
         const tot = r.querySelector('.row-total')?.innerText || '';
         const cut = r.querySelector('.row-cutlen')?.value || '';
         const ptot = r.querySelector('.row-paint-total')?.innerText || '';
-        const bars = `"${(r.querySelector('.row-bars')?.innerText || '').replace(/"/g, '""').replace(/\n/g, ' ')}"`;
+        
+        const bNew = `"${(r.querySelector('.row-bars-new')?.innerText || '').replace(/"/g, '""')}"`;
+        const bReuse = `"${(r.querySelector('.row-bars-reuse')?.innerText || '').replace(/"/g, '""').replace(/\n/g, ' ')}"`;
         const off = `"${(r.querySelector('.row-offcut')?.innerText || '').replace(/"/g, '""').replace(/\n/g, ' | ')}"`;
         const swt = r.querySelector('.row-scrapg')?.innerText || '';
 
-        csv += `${i+1},${comp},${prof},${wt},${pf},${st},${set},${qty},${tot},${cut},${ptot},${bars},${off},${swt}\n`;
+        csv += `${i+1},${comp},${prof},${wt},${pf},${st},${set},${qty},${tot},${cut},${ptot},${bNew},${bReuse},${off},${swt}\n`;
       });
 
       csv += `\n\n[ตารางที่ 2: สรุปรายการสั่งซื้อเหล็ก และพื้นที่ทาสีโครงการ (BOQ Summary)]\n`;
