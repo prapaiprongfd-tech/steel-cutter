@@ -9,8 +9,6 @@
   
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
-  <!-- ไลบรารี PDF.js สำหรับอ่านไฟล์ PDF บนเบราว์เซอร์ -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
   <style>
@@ -107,7 +105,6 @@
 </head>
 <body class="bg-slate-100 text-slate-900 text-sm font-semibold">
 
-  <!-- Header ด้านบน -->
   <header class="bg-[#1b2434] text-white p-3 shadow-md border-b-4 border-cyan-500 no-print">
     <div class="max-w-[1850px] mx-auto space-y-3">
       
@@ -139,10 +136,7 @@
         <button onclick="calculateCutting()" class="bg-[#7e57c2] hover:bg-purple-700 text-white px-4 py-1.5 rounded-md flex items-center gap-2 font-black shadow-md transition text-xs ring-2 ring-purple-300"><i class="fa-solid fa-bolt text-amber-300"></i> คำนวณความยาวสต็อก Auto ขั้นสูง</button>
         <button onclick="clearCalculations()" class="bg-[#e53935] hover:bg-red-700 text-white px-3.5 py-1.5 rounded-md flex items-center gap-2 font-bold shadow transition text-xs"><i class="fa-solid fa-arrows-rotate"></i> ล้างข้อมูลคำนวณ & วิเคราะห์ใหม่</button>
         <button onclick="triggerImportExcel()" class="bg-[#fb8c00] hover:bg-orange-600 text-white px-3.5 py-1.5 rounded-md flex items-center gap-2 font-bold shadow transition text-xs"><i class="fa-solid fa-file-excel"></i> นำเข้าไฟล์ Excel</button>
-        
-        <!-- ปุ่มนำเข้าไฟล์ PDF -->
-        <button onclick="triggerImportPdf()" class="bg-[#c62828] hover:bg-red-900 text-white px-3.5 py-1.5 rounded-md flex items-center gap-2 font-bold shadow transition text-xs ring-2 ring-red-300"><i class="fa-solid fa-file-pdf"></i> นำเข้าไฟล์ PDF</button>
-
+        <button onclick="triggerImportPdf()" class="bg-[#c62828] hover:bg-red-900 text-white px-3.5 py-1.5 rounded-md flex items-center gap-2 font-bold shadow transition text-xs"><i class="fa-solid fa-file-pdf"></i> นำเข้าไฟล์ PDF</button>
         <button onclick="resetTable()" class="bg-[#ffa000] hover:bg-amber-600 text-white px-3.5 py-1.5 rounded-md flex items-center gap-2 font-bold shadow transition text-xs"><i class="fa-solid fa-broom"></i> ล้างตารางเริ่มงานใหม่</button>
         <button onclick="exportToCSV()" class="bg-[#2e7d32] hover:bg-green-700 text-white px-3.5 py-1.5 rounded-md flex items-center gap-2 font-bold shadow transition text-xs"><i class="fa-solid fa-file-excel"></i> Export Excel</button>
         <button onclick="window.print()" class="bg-[#3949ab] hover:bg-indigo-800 text-white px-3.5 py-1.5 rounded-md flex items-center gap-2 font-bold shadow transition text-xs"><i class="fa-solid fa-print"></i> พิมพ์รายงานสมบูรณ์</button>
@@ -154,14 +148,12 @@
   </header>
 
   <div class="max-w-[1850px] mx-auto p-3 space-y-3">
-    <!-- แท็บเปลี่ยนมุมมอง -->
     <div class="flex items-center border-b-2 border-slate-300 bg-white rounded-t-lg px-2 pt-2 gap-2 shadow-sm no-print">
       <button onclick="switchTab('barcut')" id="tabBtn-barcut" class="tab-btn px-4 py-2 font-black border-b-4 border-cyan-600 text-cyan-800 flex items-center gap-2 text-sm"><i class="fa-solid fa-table-list"></i> ตาราง Barcut คำนวณตัดเหล็ก</button>
       <button onclick="switchTab('boq')" id="tabBtn-boq" class="tab-btn px-4 py-2 font-bold text-slate-500 hover:text-slate-800 flex items-center gap-2 text-sm"><i class="fa-solid fa-paint-roller text-amber-500"></i> สรุปรายการเหล็กและพื้นที่ทาสี (BOQ Sheet)</button>
       <button onclick="switchTab('cuttingSheet')" id="tabBtn-cuttingSheet" class="tab-btn px-4 py-2 font-bold text-slate-500 hover:text-slate-800 flex items-center gap-2 text-sm"><i class="fa-solid fa-diagram-project text-purple-600"></i> แผนผังตัดเหล็ก & สต็อกเศษ (Cutting Plan)</button>
     </div>
 
-    <!-- แถบตั้งค่าและเครื่องมือ -->
     <div class="bg-white p-3 rounded-lg border-2 border-slate-300 shadow-sm flex flex-wrap items-center justify-between gap-3 no-print">
       <div class="flex flex-wrap items-center gap-3">
         <div class="flex items-center gap-1.5 bg-slate-100 border border-slate-300 rounded px-3 py-1">
@@ -175,7 +167,7 @@
           <span class="text-slate-600 font-bold">มม.</span>
         </div>
         <span class="text-xs text-emerald-800 bg-emerald-100 px-3 py-1.5 rounded border border-emerald-300 font-bold flex items-center gap-1">
-          <i class="fa-solid fa-calculator"></i> พิมพ์สูตรคำนวณได้ | ระบบดึงเศษเฉพาะเมื่อช่วยลดการเบิกเหล็กใหม่ได้จริง
+          <i class="fa-solid fa-calculator"></i> นำเข้าข้อมูลผ่าน Excel/CSV หรือไฟล์ PDF รายงาน
         </span>
       </div>
 
@@ -1039,7 +1031,7 @@
     }
 
     // =========================================================================
-    // ฟังก์ชันนำเข้าไฟล์ PDF อัจฉริยะ (Adaptive Layout Parser)
+    // ฟังก์ชันนำเข้าไฟล์ PDF
     // =========================================================================
     function triggerImportPdf() {
       document.getElementById('pdfFileInput').click();
@@ -1058,20 +1050,20 @@
         const arrayBuffer = await file.arrayBuffer();
         const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
         let allLines = [];
+        let totalTextChars = 0;
 
         for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
           const page = await pdf.getPage(pageNum);
           const textContent = await page.getTextContent();
           if (!textContent.items || textContent.items.length === 0) continue;
 
-          // 1. จัดกลุ่มตัวอักษรเป็นบรรทัดตามพิกัดแนวดิ่ง (Y) ด้วยเกณฑ์กว้าง 9px
           let items = textContent.items.map(it => ({
             str: it.str,
             x: it.transform[4],
             y: it.transform[5]
           })).filter(it => it.str.trim() !== '');
 
-          // เรียงจากบนลงล่าง
+          items.forEach(it => totalTextChars += it.str.length);
           items.sort((a, b) => b.y - a.y);
 
           let linesOnPage = [];
@@ -1091,7 +1083,6 @@
             }
           });
 
-          // 2. เรียงข้อความในแต่ละบรรทัดจากซ้ายไปขวา (X) แล้วประกอบเป็นข้อความเต็ม
           linesOnPage.forEach(line => {
             line.sort((a, b) => a.x - b.x);
             let lineStr = line.map(x => x.str).join(' ').replace(/\s+/g, ' ').trim();
@@ -1101,12 +1092,10 @@
           });
         }
 
-        // 3. แกะข้อมูลจากแต่ละบรรทัด (Pattern Extraction)
         let parsedRows = [];
         const profileKeywords = /(เหล็ก|แป๊บ|ท่อ|กล่อง|ฉาก|ราง|ตัวซี|แบน|เพลา|H-Beam|I-Beam|WF|Wide|Pipe|Tube|\d+[\*xX]\d+)/i;
 
         allLines.forEach(line => {
-          // รูปแบบ A: รูปแบบรายงานมาตรฐาน CutSteel (ขึ้นต้นด้วยลำดับ 1, 2... มีข้อความ ตามด้วยสต็อก 6.0/12.0 ม. และตัวเลขชุด/qty/ยาวตัด)
           let matchCutSteel = line.match(/^\s*(\d+)\s+(.+?)\s+([0-9.]+|🔒\s*[0-9.]+)\s*(?:เมตร|ม\.)\s+(\d+)\s+(\d+)\s+(?:\d+)?\s*([0-9.]+)/);
           
           if (matchCutSteel) {
@@ -1120,7 +1109,6 @@
             let paintFactor = '';
             let namePart = rawPre;
 
-            // ตรวจสอบตัวเลข น.น. และ พ.ท. ผิวรอบรูป ท้ายข้อความ
             let numMatch = rawPre.match(/^(.*?)\s+([0-9.]+)\s+([0-9.]+)$/);
             if (numMatch) {
               namePart = numMatch[1].trim();
@@ -1134,7 +1122,6 @@
               }
             }
 
-            // แยก COMPONENT ออกจาก TYPE / หน้าตัด
             let comp = '';
             let profile = namePart;
             let kwMatch = profileKeywords.exec(namePart);
@@ -1155,29 +1142,6 @@
                 cutLen: cutLen
               });
             }
-          } else {
-            // รูปแบบ B: ตารางทั่วไป (มีตัวเลขแถว และมีค่ามิติ/ความยาว)
-            let matchGeneric = line.match(/^\s*(\d+)\s+([^\d]+.+?)\s+(\d+)\s+(\d+)\s+([0-9.]+)/);
-            if (matchGeneric && parseFloat(matchGeneric[5]) > 0) {
-              let namePart = matchGeneric[2].trim();
-              let comp = '';
-              let profile = namePart;
-              let kwMatch = profileKeywords.exec(namePart);
-              if (kwMatch && kwMatch.index > 0) {
-                comp = namePart.substring(0, kwMatch.index).trim();
-                profile = namePart.substring(kwMatch.index).trim();
-              }
-              parsedRows.push({
-                comp: comp || namePart,
-                profile: profile,
-                weight: '',
-                paintFactor: '',
-                stock: '6.0',
-                set: parseInt(matchGeneric[3]) || 1,
-                qty: parseInt(matchGeneric[4]) || 1,
-                cutLen: matchGeneric[5]
-              });
-            }
           }
         });
 
@@ -1191,7 +1155,8 @@
           syncPrintInfo();
           alert(`นำเข้าข้อมูลจากไฟล์ PDF สำเร็จเรียบร้อยแล้ว (${parsedRows.length} รายการ)`);
         } else {
-          alert('ไม่พบข้อมูลตารางรายการเหล็กในไฟล์ PDF นี้\n\nคำแนะนำ:\n1. ตรวจสอบว่าไฟล์ PDF เป็นเอกสารข้อความที่พิมพ์ออกมา (ไม่ใช่ไฟล์สแกนรูปภาพจากกล้องถ่ายรูป)\n2. หากเป็นไฟล์ Excel หรือตารางทั่วไป แนะนำให้ใช้ปุ่ม "Export Excel / CSV" หรือบันทึกเป็น CSV แล้วนำเข้าผ่านปุ่ม "นำเข้าไฟล์ Excel" จะแม่นยำที่สุด');
+          // แจ้งข้อเท็จจริงโครงสร้างของไฟล์ PDF ให้ผู้ใช้ทราบอย่างตรงไปตรงมา
+          alert(`ไฟล์ PDF นี้ถูกบันทึกมาในรูปแบบรูปภาพ/กราฟิกล้วน (ไม่มีข้อความตัวอักษรให้อ่านได้)\n\nวิธีนำเข้าข้อมูลที่ถูกต้อง:\n1. ใช้ปุ่ม "นำเข้าไฟล์ Excel" โดยเลือกไฟล์ .csv ที่เคยดาวน์โหลดไว้จากปุ่ม "Export Excel"\n2. หรือเปิดไฟล์ผ่านระบบ "คลังโครงการส่วนตัว" โดยกดปุ่ม "📥 นำเข้าคลัง" ด้วยไฟล์ .json`);
         }
 
       } catch(err) {
@@ -1203,7 +1168,7 @@
     }
 
     // =========================================================================
-    // คลังโครงการส่วนตัว (พร้อมระบบกู้คืนข้อมูลเดิมอัตโนมัติ)
+    // คลังโครงการส่วนตัว
     // =========================================================================
     function getLibraryData() {
       let v2 = localStorage.getItem('cutsteel_library_v2');
@@ -1499,9 +1464,6 @@
       reader.readAsText(file);
     }
 
-    // =========================================================================
-    // ส่งออกไฟล์ CSV / Excel
-    // =========================================================================
     function exportToCSV() {
       calculateCutting(true);
 
