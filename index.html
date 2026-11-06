@@ -175,7 +175,7 @@
           <span class="text-slate-600 font-bold">มม.</span>
         </div>
         <span class="text-xs text-emerald-800 bg-emerald-100 px-3 py-1.5 rounded border border-emerald-300 font-bold flex items-center gap-1">
-          <i class="fa-solid fa-calculator"></i> พิมพ์สูตรคำนวณได้ | นำเข้าได้ทั้งไฟล์ Excel และ PDF
+          <i class="fa-solid fa-calculator"></i> พิมพ์สูตรคำนวณได้ | ระบบดึงเศษเฉพาะเมื่อช่วยลดการเบิกเหล็กใหม่ได้จริง
         </span>
       </div>
 
@@ -298,7 +298,6 @@
     let rowCount = 0;
     let autoCalcTimer = null;
 
-    // ตั้งค่า PDF.js Worker
     if (window.pdfjsLib) {
       pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
     }
@@ -588,9 +587,7 @@
       document.getElementById('cuttingDiagramContainer').innerHTML = '<p class="text-center p-6 text-slate-500 font-bold">กดคำนวณเพื่อแสดงแผนผังการตัด</p>';
     }
 
-    // ฟังก์ชันคำนวณตัดเหล็ก
     function calculateCutting(isSilent = false) {
-      const kerfM = (parseFloat(document.getElementById('kerfInput').value) || 0) / 1000;
       const minScrapM = (parseFloat(document.getElementById('minScrapInput').value) || 500) / 1000;
       const rows = document.querySelectorAll('#barcutTbody tr');
 
@@ -692,7 +689,6 @@
           }
         });
 
-        // เพิ่มท่อนเต็ม 100% สำหรับการต่อเหล็กก่อน
         rowDecomp.forEach(rd => {
           if (rd.fullBars > 0) {
             for (let k = 0; k < rd.fullBars; k++) {
@@ -708,7 +704,6 @@
           }
         });
 
-        // จัดสรรชิ้นงานตัด: ดึงเศษเฉพาะเมื่อสามารถลดการเบิกเหล็กเส้นใหม่ได้จริง
         rowDecomp.forEach(rd => {
           if (!rd.cuts || rd.cuts.length === 0) return;
 
@@ -1044,7 +1039,7 @@
     }
 
     // =========================================================================
-    // ฟังก์ชันนำเข้าไฟล์ PDF (PDF.js Parser)
+    // ฟังก์ชันนำเข้าไฟล์ PDF อัจฉริยะ (Adaptive Layout Parser)
     // =========================================================================
     function triggerImportPdf() {
       document.getElementById('pdfFileInput').click();
@@ -1067,129 +1062,121 @@
         for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
           const page = await pdf.getPage(pageNum);
           const textContent = await page.getTextContent();
-          
           if (!textContent.items || textContent.items.length === 0) continue;
 
-          let lineGroups = [];
-          textContent.items.forEach(item => {
-            const str = item.str.trim();
-            if (!str) return;
-            const x = item.transform[4];
-            const y = Math.round(item.transform[5]);
+          // 1. จัดกลุ่มตัวอักษรเป็นบรรทัดตามพิกัดแนวดิ่ง (Y) ด้วยเกณฑ์กว้าง 9px
+          let items = textContent.items.map(it => ({
+            str: it.str,
+            x: it.transform[4],
+            y: it.transform[5]
+          })).filter(it => it.str.trim() !== '');
 
-            let group = lineGroups.find(g => Math.abs(g.y - y) <= 4);
-            if (!group) {
-              group = { y: y, items: [] };
-              lineGroups.push(group);
+          // เรียงจากบนลงล่าง
+          items.sort((a, b) => b.y - a.y);
+
+          let linesOnPage = [];
+          items.forEach(it => {
+            let matchedLine = null;
+            for (let line of linesOnPage) {
+              let avgY = line.reduce((s, x) => s + x.y, 0) / line.length;
+              if (Math.abs(avgY - it.y) <= 9) {
+                matchedLine = line;
+                break;
+              }
             }
-            group.items.push({ x: x, str: item.str });
+            if (matchedLine) {
+              matchedLine.push(it);
+            } else {
+              linesOnPage.push([it]);
+            }
           });
 
-          lineGroups.sort((a, b) => b.y - a.y);
-
-          lineGroups.forEach(g => {
-            g.items.sort((a, b) => a.x - b.x);
-
-            let merged = [];
-            g.items.forEach(it => {
-              if (merged.length === 0) {
-                merged.push({ ...it });
-              } else {
-                let last = merged[merged.length - 1];
-                if (Math.abs(it.x - (last.x + (last.str.length * 6))) < 15) {
-                  last.str += ' ' + it.str;
-                } else {
-                  merged.push({ ...it });
-                }
-              }
-            });
-
-            const tokens = merged.map(m => m.str.trim()).filter(Boolean);
-            if (tokens.length > 0) {
-              allLines.push(tokens);
+          // 2. เรียงข้อความในแต่ละบรรทัดจากซ้ายไปขวา (X) แล้วประกอบเป็นข้อความเต็ม
+          linesOnPage.forEach(line => {
+            line.sort((a, b) => a.x - b.x);
+            let lineStr = line.map(x => x.str).join(' ').replace(/\s+/g, ' ').trim();
+            if (lineStr) {
+              allLines.push(lineStr);
             }
           });
         }
 
+        // 3. แกะข้อมูลจากแต่ละบรรทัด (Pattern Extraction)
         let parsedRows = [];
+        const profileKeywords = /(เหล็ก|แป๊บ|ท่อ|กล่อง|ฉาก|ราง|ตัวซี|แบน|เพลา|H-Beam|I-Beam|WF|Wide|Pipe|Tube|\d+[\*xX]\d+)/i;
 
-        allLines.forEach(tokens => {
-          let rowNum = parseInt(tokens[0]);
-          let isTableRow = !isNaN(rowNum) && rowNum > 0 && rowNum < 10000;
+        allLines.forEach(line => {
+          // รูปแบบ A: รูปแบบรายงานมาตรฐาน CutSteel (ขึ้นต้นด้วยลำดับ 1, 2... มีข้อความ ตามด้วยสต็อก 6.0/12.0 ม. และตัวเลขชุด/qty/ยาวตัด)
+          let matchCutSteel = line.match(/^\s*(\d+)\s+(.+?)\s+([0-9.]+|🔒\s*[0-9.]+)\s*(?:เมตร|ม\.)\s+(\d+)\s+(\d+)\s+(?:\d+)?\s*([0-9.]+)/);
+          
+          if (matchCutSteel) {
+            let rawPre = matchCutSteel[2].trim();
+            let stock = matchCutSteel[3].replace(/[^0-9.]/g, '') || '6.0';
+            let setVal = parseInt(matchCutSteel[4]) || 1;
+            let qtyVal = parseInt(matchCutSteel[5]) || 1;
+            let cutLen = matchCutSteel[6] || '';
 
-          if (isTableRow && tokens.length >= 5) {
-            let comp = tokens[1] || '';
-            let profile = tokens[2] || '';
             let weight = '';
             let paintFactor = '';
-            let stock = '6.0';
-            let set = '1';
-            let qty = '1';
-            let cutLen = '';
+            let namePart = rawPre;
 
-            let numericIndices = [];
-            for (let i = 3; i < tokens.length; i++) {
-              let clean = tokens[i].replace(/[^\d.\+\-\*\/]/g, '');
-              if (clean && !isNaN(parseFloat(clean))) {
-                numericIndices.push(i);
-              }
-            }
-
-            if (numericIndices.length >= 4) {
-              weight = tokens[3] || '';
-              paintFactor = tokens[4] || '';
-              
-              if (tokens[5] && tokens[5].includes('12')) stock = '12.0';
-              else stock = '6.0';
-
-              if (tokens.length >= 10) {
-                set = tokens[6] || '1';
-                qty = tokens[7] || '1';
-                cutLen = tokens[9] || '';
-              } else if (tokens.length >= 8) {
-                set = tokens[5] || '1';
-                qty = tokens[6] || '1';
-                cutLen = tokens[7] || '';
-              }
+            // ตรวจสอบตัวเลข น.น. และ พ.ท. ผิวรอบรูป ท้ายข้อความ
+            let numMatch = rawPre.match(/^(.*?)\s+([0-9.]+)\s+([0-9.]+)$/);
+            if (numMatch) {
+              namePart = numMatch[1].trim();
+              weight = numMatch[2];
+              paintFactor = numMatch[3];
             } else {
-              comp = tokens[1] || '';
-              profile = tokens[2] || '';
-              qty = tokens[3] || '1';
-              cutLen = tokens[4] || '';
+              let singleNum = rawPre.match(/^(.*?)\s+([0-9.]+)$/);
+              if (singleNum) {
+                namePart = singleNum[1].trim();
+                weight = singleNum[2];
+              }
             }
 
-            set = parseInt(set) || 1;
-            qty = parseInt(qty) || 1;
-            cutLen = cutLen.replace(/[^0-9.\+\-\*\/\(\)]/g, '');
+            // แยก COMPONENT ออกจาก TYPE / หน้าตัด
+            let comp = '';
+            let profile = namePart;
+            let kwMatch = profileKeywords.exec(namePart);
+            if (kwMatch && kwMatch.index > 0) {
+              comp = namePart.substring(0, kwMatch.index).trim();
+              profile = namePart.substring(kwMatch.index).trim();
+            }
 
-            if (cutLen) {
+            if (cutLen && !isNaN(parseFloat(cutLen))) {
               parsedRows.push({
-                comp: comp,
+                comp: comp || namePart,
                 profile: profile,
                 weight: weight,
                 paintFactor: paintFactor,
-                stock: stock,
-                set: set,
-                qty: qty,
+                stock: stock.includes('12') ? '12.0' : '6.0',
+                set: setVal,
+                qty: qtyVal,
                 cutLen: cutLen
               });
             }
           } else {
-            const fullLine = tokens.join(' ');
-            if (fullLine.includes(',') || fullLine.includes('\t')) {
-              let parts = fullLine.split(/[,\t]/).map(p => p.trim());
-              if (parts.length >= 5 && !isNaN(parseInt(parts[0]))) {
-                parsedRows.push({
-                  comp: parts[1] || '',
-                  profile: parts[2] || '',
-                  weight: parts[3] || '',
-                  paintFactor: parts[4] || '',
-                  stock: parts[5] && parts[5].includes('12') ? '12.0' : '6.0',
-                  set: parseInt(parts[6]) || 1,
-                  qty: parseInt(parts[7]) || 1,
-                  cutLen: parts[9] || parts[8] || ''
-                });
+            // รูปแบบ B: ตารางทั่วไป (มีตัวเลขแถว และมีค่ามิติ/ความยาว)
+            let matchGeneric = line.match(/^\s*(\d+)\s+([^\d]+.+?)\s+(\d+)\s+(\d+)\s+([0-9.]+)/);
+            if (matchGeneric && parseFloat(matchGeneric[5]) > 0) {
+              let namePart = matchGeneric[2].trim();
+              let comp = '';
+              let profile = namePart;
+              let kwMatch = profileKeywords.exec(namePart);
+              if (kwMatch && kwMatch.index > 0) {
+                comp = namePart.substring(0, kwMatch.index).trim();
+                profile = namePart.substring(kwMatch.index).trim();
               }
+              parsedRows.push({
+                comp: comp || namePart,
+                profile: profile,
+                weight: '',
+                paintFactor: '',
+                stock: '6.0',
+                set: parseInt(matchGeneric[3]) || 1,
+                qty: parseInt(matchGeneric[4]) || 1,
+                cutLen: matchGeneric[5]
+              });
             }
           }
         });
@@ -1204,7 +1191,7 @@
           syncPrintInfo();
           alert(`นำเข้าข้อมูลจากไฟล์ PDF สำเร็จเรียบร้อยแล้ว (${parsedRows.length} รายการ)`);
         } else {
-          alert('ไม่พบข้อมูลตารางรายการเหล็กในไฟล์ PDF นี้\n\nคำแนะนำ:\n1. ไฟล์ PDF ต้องมีข้อความตัวอักษร (ไม่ใช่ไฟล์สแกนจากกล้องหรือรูปภาพ)\n2. เป็นเอกสารตาราง Barcut หรือรายงานที่ส่งออกจากระบบ CutSteel');
+          alert('ไม่พบข้อมูลตารางรายการเหล็กในไฟล์ PDF นี้\n\nคำแนะนำ:\n1. ตรวจสอบว่าไฟล์ PDF เป็นเอกสารข้อความที่พิมพ์ออกมา (ไม่ใช่ไฟล์สแกนรูปภาพจากกล้องถ่ายรูป)\n2. หากเป็นไฟล์ Excel หรือตารางทั่วไป แนะนำให้ใช้ปุ่ม "Export Excel / CSV" หรือบันทึกเป็น CSV แล้วนำเข้าผ่านปุ่ม "นำเข้าไฟล์ Excel" จะแม่นยำที่สุด');
         }
 
       } catch(err) {
@@ -1222,7 +1209,6 @@
       let v2 = localStorage.getItem('cutsteel_library_v2');
       let lib = v2 ? JSON.parse(v2) : {};
 
-      // กู้คืนข้อมูลเวอร์ชันเดิมเข้ามารวมอัตโนมัติหากยังหลงเหลืออยู่ในเครื่อง
       let oldData = localStorage.getItem('cutsteel_projects');
       if (oldData) {
         try {
